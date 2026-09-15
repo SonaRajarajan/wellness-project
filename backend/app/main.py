@@ -14,7 +14,7 @@ from app.api.exercise_detection_mediapipe_stgcn_api import router as exercise_cv
 from app.api.health_risk_prediction_xgboost_api import router as health_risk_router
 from app.api.anomaly_detection_isolation_forest_api import router as anomaly_detection_router
 from app.api.employee_segmentation_kmeans_api import router as segmentation_router
-from app.api.genai_wellness_coach_llm_rag_graph_api import router as genai_coach_router
+from app.api.genai_wellness_coach_llm_rag_graph_api import router as genai_coach_router, rag_alias_router
 from app.api.datasets import router as datasets_router
 from app.api.digital_twin import router as digital_twin_router
 from app.api.hr_dashboard import router as hr_dashboard_router
@@ -55,6 +55,7 @@ app.include_router(health_risk_router, prefix=settings.API_V1_STR)
 app.include_router(anomaly_detection_router, prefix=settings.API_V1_STR)
 app.include_router(segmentation_router, prefix=settings.API_V1_STR)
 app.include_router(genai_coach_router, prefix=settings.API_V1_STR)
+app.include_router(rag_alias_router, prefix=settings.API_V1_STR)
 app.include_router(datasets_router, prefix=settings.API_V1_STR)
 app.include_router(digital_twin_router, prefix=settings.API_V1_STR)
 app.include_router(hr_dashboard_router, prefix=settings.API_V1_STR)
