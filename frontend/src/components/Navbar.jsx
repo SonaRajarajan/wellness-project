@@ -187,28 +187,30 @@ export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboard
           </div>
         </div>
 
-        {/* BOTTOM ROW: Employee Personal Feature Section Navigation Links */}
-        <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1">
-          {sectionLinks.map((link) => {
-            const Icon = link.icon;
-            const isActive = location.pathname === link.path;
-            return (
-              <Link
-                key={link.path}
-                to={link.path}
-                onClick={(e) => handleSectionLinkClick(e, link.path)}
-                className={`flex items-center gap-1 px-3 py-1 border text-[11px] font-semibold uppercase tracking-wider transition-all ${
-                  isActive
-                    ? 'bg-[#182638] text-[#00f0ff] border-[#00f0ff] font-bold shadow-[0_0_6px_#00f0ff]'
-                    : 'bg-[#141923] text-gray-400 border-[#2a3442] hover:border-gray-400 hover:text-white'
-                }`}
-              >
-                <Icon size={13} />
-                <span>{link.label}</span>
-              </Link>
-            );
-          })}
-        </div>
+        {/* BOTTOM ROW: Employee Personal Feature Section Navigation Links (Hidden on HR Dashboard) */}
+        {location.pathname !== '/hr-dashboard' && (
+          <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1">
+            {sectionLinks.map((link) => {
+              const Icon = link.icon;
+              const isActive = location.pathname === link.path;
+              return (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  onClick={(e) => handleSectionLinkClick(e, link.path)}
+                  className={`flex items-center gap-1 px-3 py-1 border text-[11px] font-semibold uppercase tracking-wider transition-all ${
+                    isActive
+                      ? 'bg-[#182638] text-[#00f0ff] border-[#00f0ff] font-bold shadow-[0_0_6px_#00f0ff]'
+                      : 'bg-[#141923] text-gray-400 border-[#2a3442] hover:border-gray-400 hover:text-white'
+                  }`}
+                >
+                  <Icon size={13} />
+                  <span>{link.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </div>
     </nav>
   );
