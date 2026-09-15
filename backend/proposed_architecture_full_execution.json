@@ -1,0 +1,65 @@
+{
+  "status": "success",
+  "timestamp": "2026-08-30 16:26:07",
+  "layer_1_data": {
+    "iot": {
+      "heart_rate_bpm": 72.5,
+      "hrv_ms": 55.4,
+      "sleep_hours": 7.5,
+      "spo2_pct": 98.2,
+      "steps_count": 9200,
+      "calories_burned": 540.0
+    },
+    "hrms": {
+      "employee_id": "EMP-1001",
+      "name": "Sona VR",
+      "department": "Alpha IT",
+      "attendance_pct": 98.5,
+      "workload_hours_per_week": 55.0,
+      "performance_rating": 4.8,
+      "leave_days_taken": 1,
+      "demographics": {
+        "age": 24,
+        "gender": "Female",
+        "role": "Lead Developer"
+      }
+    },
+    "nutrition": {
+      "cafeteria_meal": "Dalma + Semolina porridge",
+      "bmi": 22.4,
+      "meals_per_day": 3,
+      "calories_intake": 1850.0,
+      "nutrition_info": {
+        "protein_g": 68.5,
+        "carbs_g": 220.0,
+        "fat_g": 45.0,
+        "fiber_g": 28.0
+      }
+    },
+    "cv": {
+      "video_stream": "cam_feed_01.mp4",
+      "fps": 30,
+      "exercise_tracking_active": true,
+      "posture_analysis_mode": "Squats & Bicep Curls",
+      "movement_quality_baseline": "Grade A"
+    },
+    "inputs": {
+      "fitness_goals": "Maintain cardiovascular wellness & muscle tone",
+      "current_mood": "Focused",
+      "reported_symptoms": "Mild neck tightness post-workload",
+      "feedback": "Loves Rival Mode team challenges",
+      "habits": "Drinks 2.5L water daily, walks post-dinner"
+    }
+  },
+  "layer_2_models": {
+    "xgboost_accuracy": 0.942,
+    "burnout_score": 0.6999,
+    "wellness_score": 8.0,
+    "exercise_form_score": 62.0
+  },
+  "layer_3_impact": {
+    "daer_engagement_pct": 71.4,
+    "score_improvement_pct": 18.3,
+    "trl_level": 7
+  }
+}
