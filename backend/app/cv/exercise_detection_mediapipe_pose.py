@@ -88,6 +88,49 @@ class MediaPipeExercisePoseTracker:
         cosine_angle = max(-1.0, min(1.0, cosine_angle))
         return math.degrees(math.acos(cosine_angle))
 
+    def _count_reps_with_hysteresis(self, angles: List[float], exercise_type: str = "Squat") -> int:
+        if not angles:
+            return 0
+        
+        # 1. Moving average smoothing (window = 5 frames)
+        window_size = 5
+        smoothed = []
+        for i in range(len(angles)):
+            start = max(0, i - window_size + 1)
+            smoothed.append(sum(angles[start:i+1]) / (i - start + 1))
+
+        # 2. Debounced Peak/Trough state machine
+        reps = 0
+        state = "UP"
+        min_frames_between_reps = 12  # At 30 FPS, reps must be at least ~0.4s apart
+        last_rep_frame = -min_frames_between_reps
+        down_frames = 0
+
+        is_leg_ex = exercise_type.lower() in ["squat", "lunge"]
+        dip_threshold = 112.0 if is_leg_ex else 85.0
+        up_threshold = 142.0 if is_leg_ex else 142.0
+
+        for frame_idx, angle in enumerate(smoothed):
+            if state == "UP":
+                if angle < dip_threshold:
+                    down_frames += 1
+                    if down_frames >= 2:
+                        state = "DOWN"
+                else:
+                    down_frames = 0
+            elif state == "DOWN":
+                if angle > up_threshold:
+                    if (frame_idx - last_rep_frame) >= min_frames_between_reps:
+                        reps += 1
+                        last_rep_frame = frame_idx
+                    state = "UP"
+                    down_frames = 0
+
+        if reps == 0 and len(angles) >= 25:
+            reps = 1
+
+        return reps
+
     def analyze_video_file(self, video_path: str, exercise_type: str = "Squat") -> Dict[str, Any]:
         """
         Processes an uploaded exercise video file using FFmpeg, OpenCV & MediaPipe Pose.
@@ -119,8 +162,6 @@ class MediaPipeExercisePoseTracker:
         h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)) or 480
 
         joint_angles = []
-        reps = 0
-        state = "UP"
         landmarks_extracted = 0
 
         # Try MediaPipe 3D Landmark Tracking first
@@ -156,12 +197,6 @@ class MediaPipeExercisePoseTracker:
 
                             angle = min(l_angle, r_angle)
                             joint_angles.append(angle)
-
-                            if angle < 110.0 and state == "UP":
-                                state = "DOWN"
-                            if angle > 145.0 and state == "DOWN":
-                                state = "UP"
-                                reps += 1
                         else:
                             l_shoulder = [lms[11].x * w, lms[11].y * h]
                             l_elbow = [lms[13].x * w, lms[13].y * h]
@@ -175,12 +210,6 @@ class MediaPipeExercisePoseTracker:
 
                             angle = min(l_angle, r_angle)
                             joint_angles.append(angle)
-
-                            if angle < 85.0 and state == "UP":
-                                state = "DOWN"
-                            if angle > 145.0 and state == "DOWN":
-                                state = "UP"
-                                reps += 1
                 pose.close()
         except Exception as mpe:
             print(f"[MediaPipePoseTracker] MediaPipe Solutions notice: {mpe}")
@@ -206,12 +235,6 @@ class MediaPipeExercisePoseTracker:
                         aspect_ratio = bh / float(bw) if bw > 0 else 2.0
                         computed_angle = max(72.0, min(175.0, aspect_ratio * 58.0))
                         joint_angles.append(computed_angle)
-
-                        if computed_angle < 110.0 and state == "UP":
-                            state = "DOWN"
-                        if computed_angle > 140.0 and state == "DOWN":
-                            state = "UP"
-                            reps += 1
         cap.release()
 
         if temp_converted and os.path.exists(temp_converted):
@@ -226,12 +249,9 @@ class MediaPipeExercisePoseTracker:
                 phase = (i % 30) / 30.0
                 angle = 165.0 - 75.0 * math.sin(phase * math.pi)
                 joint_angles.append(angle)
-                if angle < 110.0 and state == "UP":
-                    state = "DOWN"
-                if angle > 145.0 and state == "DOWN":
-                    state = "UP"
-                    reps += 1
             landmarks_extracted = num_sim_frames
+
+        reps = self._count_reps_with_hysteresis(joint_angles, exercise_type)
 
         min_angle = min(joint_angles) if joint_angles else 92.4
         max_angle = max(joint_angles) if joint_angles else 172.6
@@ -260,9 +280,6 @@ class MediaPipeExercisePoseTracker:
             else:
                 form_score = 68.0
                 feedback = "Partial range of motion detected - complete full contraction."
-
-        if reps == 0:
-            reps = max(1, len(joint_angles) // 28)
 
         cals_burned = round(reps * 0.45, 2)
         duration_sec = round(len(joint_angles) / fps, 1) if fps > 0 else round(reps * 2.5, 1)
