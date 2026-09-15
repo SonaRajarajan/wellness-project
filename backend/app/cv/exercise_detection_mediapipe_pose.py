@@ -89,7 +89,7 @@ class MediaPipeExercisePoseTracker:
         return math.degrees(math.acos(cosine_angle))
 
     def _count_reps_with_hysteresis(self, angles: List[float], exercise_type: str = "Squat") -> int:
-        if not angles:
+        if not angles or len(angles) < 10:
             return 0
         
         # 1. Moving average smoothing (window = 5 frames)
@@ -99,34 +99,35 @@ class MediaPipeExercisePoseTracker:
             start = max(0, i - window_size + 1)
             smoothed.append(sum(angles[start:i+1]) / (i - start + 1))
 
-        # 2. Debounced Peak/Trough state machine
+        min_a = min(smoothed)
+        max_a = max(smoothed)
+        rng = max_a - min_a
+
+        if rng < 12.0:
+            return 1
+
+        # Adaptive dynamic range thresholding
+        is_leg_ex = exercise_type.lower() in ["squat", "lunge"]
+        dip_threshold = min_a + 0.35 * rng if rng >= 20.0 else (115.0 if is_leg_ex else 90.0)
+        up_threshold = min_a + 0.60 * rng if rng >= 20.0 else (135.0 if is_leg_ex else 135.0)
+
         reps = 0
         state = "UP"
-        min_frames_between_reps = 12  # At 30 FPS, reps must be at least ~0.4s apart
+        min_frames_between_reps = 10  # Minimum ~0.33s between reps
         last_rep_frame = -min_frames_between_reps
-        down_frames = 0
-
-        is_leg_ex = exercise_type.lower() in ["squat", "lunge"]
-        dip_threshold = 112.0 if is_leg_ex else 85.0
-        up_threshold = 142.0 if is_leg_ex else 142.0
 
         for frame_idx, angle in enumerate(smoothed):
             if state == "UP":
-                if angle < dip_threshold:
-                    down_frames += 1
-                    if down_frames >= 2:
-                        state = "DOWN"
-                else:
-                    down_frames = 0
+                if angle <= dip_threshold:
+                    state = "DOWN"
             elif state == "DOWN":
-                if angle > up_threshold:
+                if angle >= up_threshold:
                     if (frame_idx - last_rep_frame) >= min_frames_between_reps:
                         reps += 1
                         last_rep_frame = frame_idx
                     state = "UP"
-                    down_frames = 0
 
-        if reps == 0 and len(angles) >= 25:
+        if reps == 0 and len(angles) >= 20:
             reps = 1
 
         return reps
