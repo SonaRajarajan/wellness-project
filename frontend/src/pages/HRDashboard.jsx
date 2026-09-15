@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, Users, AlertTriangle, TrendingUp, Activity, CheckCircle2, Bell, ExternalLink, Lock, ShieldAlert, KeyRound, ArrowRight } from 'lucide-react';
+import { ShieldCheck, Users, AlertTriangle, TrendingUp, Activity, CheckCircle2, Bell, ExternalLink, Lock, ShieldAlert, KeyRound, ArrowRight, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import DigitalTwin from './DigitalTwin';
 
 export default function HRDashboard({ user, onSelectEmployee, isHrAuthenticated, onAuthenticateHr }) {
   const navigate = useNavigate();
@@ -83,13 +84,13 @@ export default function HRDashboard({ user, onSelectEmployee, isHrAuthenticated,
   const handleInspectEmployee = (emp) => {
     if (onSelectEmployee) {
       onSelectEmployee({
-        id: emp.employee_id,
-        employee_id: emp.employee_id,
-        name: emp.name || emp.employee_id,
+        id: emp.employee_id || emp.id,
+        employee_id: emp.employee_id || emp.id,
+        name: emp.name || emp.employee_id || emp.id,
         department: emp.department || 'All Departments'
       });
     }
-    navigate('/digital-twin');
+    setHrSubTab('twin');
   };
 
   if (!isHrAuthenticated) {
@@ -160,7 +161,7 @@ export default function HRDashboard({ user, onSelectEmployee, isHrAuthenticated,
     );
   }
 
-  const [hrSubTab, setHrSubTab] = useState('overview'); // 'overview' | 'leaderboard' | 'players'
+  const [hrSubTab, setHrSubTab] = useState('overview'); // 'overview' | 'leaderboard' | 'players' | 'twin'
 
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-6">
@@ -185,7 +186,7 @@ export default function HRDashboard({ user, onSelectEmployee, isHrAuthenticated,
       </div>
 
       {/* HR SUB-TAB NAVIGATION BUTTONS */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <button
           onClick={() => setHrSubTab('overview')}
           className={`p-3.5 border-2 flex items-center justify-center gap-2.5 font-black text-xs md:text-sm uppercase tracking-wider transition-all cursor-pointer ${
@@ -219,7 +220,19 @@ export default function HRDashboard({ user, onSelectEmployee, isHrAuthenticated,
           }`}
         >
           <Users size={18} />
-          <span>3. PLAYERS & DASHBOARDS</span>
+          <span>3. PLAYERS DIRECTORY</span>
+        </button>
+
+        <button
+          onClick={() => setHrSubTab('twin')}
+          className={`p-3.5 border-2 flex items-center justify-center gap-2.5 font-black text-xs md:text-sm uppercase tracking-wider transition-all cursor-pointer ${
+            hrSubTab === 'twin'
+              ? 'bg-purple-500 text-black border-white shadow-[0_0_15px_#a855f7]'
+              : 'bg-[#121820] text-gray-400 border-[#2a3442] hover:border-purple-500 hover:text-white'
+          }`}
+        >
+          <User size={18} />
+          <span>4. EMPLOYEE DIGITAL TWIN</span>
         </button>
       </div>
 
@@ -485,6 +498,31 @@ export default function HRDashboard({ user, onSelectEmployee, isHrAuthenticated,
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* SUB-TAB 4: EMPLOYEE DIGITAL TWIN */}
+      {hrSubTab === 'twin' && (
+        <div className="space-y-4">
+          <div className="bg-[#121820] border-2 border-purple-500 p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_0_15px_rgba(168,85,247,0.2)] font-mono">
+            <div>
+              <h2 className="text-base md:text-lg font-black text-purple-400 uppercase tracking-wider flex items-center gap-2">
+                <User size={20} />
+                INSPECTING DIGITAL TWIN: {user?.name || 'Sona VR'} ({user?.employee_id || user?.id || 'EMP001'})
+              </h2>
+              <p className="text-xs text-gray-400 font-mono mt-0.5">
+                Viewing individual employee twin metrics, burnout risk index, and health scores in HR mode
+              </p>
+            </div>
+            <button
+              onClick={() => setHrSubTab('players')}
+              className="px-3.5 py-2 bg-[#182230] border-2 border-[#00f0ff] text-[#00f0ff] hover:bg-[#00f0ff] hover:text-black font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap shadow-md"
+            >
+              <span>← Switch Employee Player</span>
+            </button>
+          </div>
+
+          <DigitalTwin user={user} />
         </div>
       )}
     </div>
