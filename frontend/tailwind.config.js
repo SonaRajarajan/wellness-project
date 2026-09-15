@@ -7,17 +7,28 @@ export default {
   theme: {
     extend: {
       colors: {
-        obsidian: "#0d0f12",
+        obsidian: "#0b071e",
+        cosmicDark: "#0b071e",
+        cosmicSpace: "#120a2e",
+        cosmicCard: "#180e3d",
         pixelDark: "#12161b",
         pixelCard: "#181e26",
-        pixelBorder: "#2a3442",
+        pixelBorder: "#2b1b54",
         neonGreen: "#00ff66",
         neonCyan: "#00f0ff",
-        neonPink: "#ff0055",
-        neonYellow: "#ffee00",
+        neonPink: "#ff007f",
+        neonYellow: "#ffe600",
+        pixelPink: "#ff007f",
+        pixelCyan: "#00f0ff",
+        pixelYellow: "#ffe600",
+        pixelGreen: "#00ff66",
       },
       fontFamily: {
-        mono: ['"Courier New"', "Courier", "monospace"]
+        pixel: ['"Press Start 2P"', 'cursive', 'monospace'],
+        silkscreen: ['"Silkscreen"', 'cursive', 'monospace'],
+        vt323: ['"VT323"', 'monospace'],
+        pixelify: ['"Pixelify Sans"', 'sans-serif'],
+        mono: ['"VT323"', '"Press Start 2P"', '"Courier New"', 'monospace'],
       }
     },
   },

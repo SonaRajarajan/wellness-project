@@ -121,74 +121,101 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
   const selectedEmpObj = employeesList.find((e) => (e.employee_id || e.id) === selectedEmpId);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
-      <div className="w-full max-w-4xl bg-[#121820] border-2 border-[#00f0ff] p-6 shadow-[0_0_40px_rgba(0,240,255,0.3)] relative text-white my-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md overflow-y-auto font-mono">
+      <div className="w-full max-w-4xl crt-monitor-frame p-6 md:p-8 shadow-[0_0_50px_rgba(77,238,234,0.4)] relative text-white my-8 crt-screen-sheen">
         
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white bg-[#182230] p-1.5 border border-[#2a3442] hover:border-[#00f0ff] transition-all"
+          className="absolute top-4 right-4 text-gray-400 hover:text-white bg-[#0b071e] p-2 border-2 border-[#4deeea] hover:border-[#ff007f] transition-all cursor-pointer font-pixel text-xs z-30"
         >
-          <X size={20} />
+          ✕
         </button>
 
-        {/* Header */}
-        <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center gap-2 px-3 py-1 bg-[#00f0ff]/10 border border-[#00f0ff] text-[#00f0ff] text-xs font-bold uppercase tracking-widest mb-2">
-            <Shield size={14} />
-            EMPLOYEE ACCESS & ONBOARDING PORTAL
+        {/* RETRO CRT MISSION BRIEFING HEADER (Directly matching reference image) */}
+        <div className="text-center mb-6 space-y-3">
+          <div className="text-xs md:text-sm font-pixel text-[#4deeea] tracking-widest uppercase animate-pulse">
+            MISSION BRIEFING:
           </div>
-          <h2 className="text-2xl font-black text-white uppercase tracking-wider">
-            Select or Register Employee Profile
+          <h2 className="text-2xl md:text-4xl font-black text-white font-pixel uppercase tracking-widest drop-shadow-[0_0_12px_#ffffff]">
+            ONBOARDING
           </h2>
-          <p className="text-xs text-gray-400 mt-1">
-            Choose an existing registered employee or register a new employee with user goals, mood, and symptoms.
-          </p>
+
+          {/* Retro Pixel HP Energy Meter */}
+          <div className="max-w-xs mx-auto pixel-hp-bar rounded-full my-2">
+            <span className="text-red-500 animate-pulse text-base">❤️</span>
+            <div className="flex-1 h-3 bg-[#090517] border border-[#00ff66] rounded-sm overflow-hidden">
+              <div className="pixel-hp-bar-fill w-[80%]" />
+            </div>
+          </div>
+
+          {/* CRT Computer Terminal Box Motif (Matching center frame in reference image) */}
+          <div className="bg-[#0b071e] border-4 border-[#4deeea] p-4 md:p-6 max-w-lg mx-auto rounded-xl shadow-[0_0_20px_rgba(77,238,234,0.3)] space-y-3 relative overflow-hidden">
+            <div className="text-xs md:text-sm text-[#00f0ff] font-vt323 tracking-widest">
+              HI. . . . . . . . YOU'RE INVITED TO:
+            </div>
+            <div className="text-lg md:text-2xl font-black text-[#ffe600] font-pixel leading-relaxed uppercase tracking-wider drop-shadow-[0_0_10px_#ffe600]">
+              ONBOARDING SMILEMOTION STELLAR <span className="text-red-500">❤️</span> 2026 <span className="text-red-500">❤️</span>
+            </div>
+          </div>
+
+          {/* Retro Pill Badges (Directly from reference image) */}
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+            <div className="pixel-pill-badge">
+              <span>📅 Friday, 13 March 2026</span>
+            </div>
+            <div className="pixel-pill-badge pixel-pill-badge-cyan">
+              <span>⏰ 16.30 - finished</span>
+            </div>
+            <div className="pixel-pill-badge pixel-pill-badge-yellow">
+              <span>🚀 RK 1 GD 2 FKG UNPAD</span>
+            </div>
+          </div>
         </div>
 
         {/* 2 MAIN MODE TAB BUTTONS */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
           <button
             onClick={() => setActiveTab('existing')}
-            className={`p-4 border-2 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-wider transition-all ${
+            className={`p-4 border-3 flex items-center justify-center gap-3 font-black text-xs md:text-sm font-silkscreen uppercase tracking-wider transition-all cursor-pointer ${
               activeTab === 'existing'
                 ? 'bg-[#00f0ff] text-black border-white shadow-[0_0_20px_#00f0ff]'
-                : 'bg-[#182230] text-gray-400 border-[#2a3442] hover:border-[#00f0ff] hover:text-white'
+                : 'bg-[#120a2e] text-gray-300 border-[#2b1b54] hover:border-[#00f0ff] hover:text-white'
             }`}
           >
-            <UserCheck size={22} />
-            <span>1. EXISTING EMPLOYEE DETAILS</span>
+            <UserCheck size={20} />
+            <span>1. EXISTING EMPLOYEE</span>
           </button>
 
           <button
             onClick={() => setActiveTab('new')}
-            className={`p-4 border-2 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-wider transition-all ${
+            className={`p-4 border-3 flex items-center justify-center gap-3 font-black text-xs md:text-sm font-silkscreen uppercase tracking-wider transition-all cursor-pointer ${
               activeTab === 'new'
                 ? 'bg-[#00ff66] text-black border-white shadow-[0_0_20px_#00ff66]'
-                : 'bg-[#182230] text-gray-400 border-[#2a3442] hover:border-[#00ff66] hover:text-white'
+                : 'bg-[#120a2e] text-gray-300 border-[#2b1b54] hover:border-[#00ff66] hover:text-white'
             }`}
           >
-            <UserPlus size={22} />
-            <span>2. NEW EMPLOYEE DETAILS (INPUTS)</span>
+            <UserPlus size={20} />
+            <span>2. NEW EMPLOYEE (INPUTS)</span>
           </button>
         </div>
 
         {/* TAB 1: EXISTING EMPLOYEE DETAILS */}
         {activeTab === 'existing' && (
-          <div className="space-y-6 bg-[#182230] p-6 border border-[#2a3442]">
+          <div className="space-y-6 bg-[#120a2e] p-6 border-2 border-[#00f0ff] shadow-lg">
             <div>
-              <label className="block text-xs uppercase font-bold text-[#00f0ff] tracking-wider mb-2">
+              <label className="block text-xs uppercase font-bold text-[#00f0ff] tracking-wider mb-2 font-silkscreen">
                 Select Registered Employee from Database:
               </label>
               <select
                 value={selectedEmpId}
                 onChange={(e) => setSelectedEmpId(e.target.value)}
-                className="w-full px-4 py-3 bg-[#0b0e14] border-2 border-[#00f0ff] text-white font-mono text-sm font-bold focus:outline-none cursor-pointer"
+                className="w-full px-4 py-3 bg-[#0b071e] border-2 border-[#00f0ff] text-white font-mono text-sm font-bold focus:outline-none cursor-pointer"
               >
                 {employeesList.map((emp) => {
                   const idVal = emp.employee_id || emp.id;
                   return (
-                    <option key={idVal} value={idVal} className="bg-[#141923] text-white">
+                    <option key={idVal} value={idVal} className="bg-[#0b071e] text-white">
                       {idVal} — {emp.name} ({emp.department} • {emp.role || 'Employee'})
                     </option>
                   );
