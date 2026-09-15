@@ -88,49 +88,66 @@ class MediaPipeExercisePoseTracker:
         cosine_angle = max(-1.0, min(1.0, cosine_angle))
         return math.degrees(math.acos(cosine_angle))
 
-    def _count_reps_with_hysteresis(self, angles: List[float], exercise_type: str = "Squat") -> int:
+    def _count_reps_with_hysteresis(self, angles: List[float], exercise_type: str = "Squat", fps: float = 30.0) -> int:
         if not angles or len(angles) < 10:
             return 0
         
-        # 1. Moving average smoothing (window = 5 frames)
-        window_size = 5
-        smoothed = []
-        for i in range(len(angles)):
-            start = max(0, i - window_size + 1)
-            smoothed.append(sum(angles[start:i+1]) / (i - start + 1))
+        import numpy as np
+        from scipy.signal import find_peaks, savgol_filter
 
-        min_a = min(smoothed)
-        max_a = max(smoothed)
+        angles_arr = np.array(angles, dtype=float)
+        n_pts = len(angles_arr)
+
+        # 1. Smooth angle curve
+        if n_pts >= 15:
+            win_size = min(15, n_pts if n_pts % 2 != 0 else n_pts - 1)
+            smoothed = savgol_filter(angles_arr, win_size, 2)
+        else:
+            smoothed = angles_arr
+
+        min_a = float(np.min(smoothed))
+        max_a = float(np.max(smoothed))
         rng = max_a - min_a
 
-        if rng < 12.0:
-            return 1
+        if rng < 8.0:
+            return 1 if n_pts >= 30 else 0
 
-        # Adaptive dynamic range thresholding
-        is_leg_ex = exercise_type.lower() in ["squat", "lunge"]
-        dip_threshold = min_a + 0.35 * rng if rng >= 20.0 else (115.0 if is_leg_ex else 90.0)
-        up_threshold = min_a + 0.60 * rng if rng >= 20.0 else (135.0 if is_leg_ex else 135.0)
+        # Peak detection on inverted signal (dips are valleys in joint angle -> peaks in inverted signal)
+        min_dist = max(10, int(fps * 0.9))
+        prom = max(6.0, 0.12 * rng)
+
+        inv_signal = -smoothed
+        peaks, _ = find_peaks(inv_signal, distance=min_dist, prominence=prom)
+
+        if len(peaks) > 0:
+            return len(peaks)
+
+        # Fallback peak detection with lower prominence
+        peaks_fb, _ = find_peaks(inv_signal, distance=min_dist, prominence=max(3.0, 0.06 * rng))
+        if len(peaks_fb) > 0:
+            return len(peaks_fb)
+
+        # Hysteresis threshold state machine fallback
+        is_leg = exercise_type.lower() in ["squat", "lunge"]
+        dip_threshold = min_a + 0.35 * rng
+        up_threshold = min_a + 0.65 * rng
 
         reps = 0
         state = "UP"
-        min_frames_between_reps = 10  # Minimum ~0.33s between reps
-        last_rep_frame = -min_frames_between_reps
+        last_rep_frame = -min_dist
 
-        for frame_idx, angle in enumerate(smoothed):
+        for idx, val in enumerate(smoothed):
             if state == "UP":
-                if angle <= dip_threshold:
+                if val <= dip_threshold:
                     state = "DOWN"
             elif state == "DOWN":
-                if angle >= up_threshold:
-                    if (frame_idx - last_rep_frame) >= min_frames_between_reps:
+                if val >= up_threshold:
+                    if (idx - last_rep_frame) >= min_dist:
                         reps += 1
-                        last_rep_frame = frame_idx
+                        last_rep_frame = idx
                     state = "UP"
 
-        if reps == 0 and len(angles) >= 20:
-            reps = 1
-
-        return reps
+        return max(1, reps) if n_pts >= 30 else reps
 
     def analyze_video_file(self, video_path: str, exercise_type: str = "Squat") -> Dict[str, Any]:
         """
@@ -215,10 +232,12 @@ class MediaPipeExercisePoseTracker:
         except Exception as mpe:
             print(f"[MediaPipePoseTracker] MediaPipe Solutions notice: {mpe}")
 
-        # If MediaPipe Solutions unavailable or zero landmarks extracted, process video using Frame-Difference Motion Tracking
+        # If MediaPipe Solutions unavailable or zero landmarks extracted, process video using Background Subtraction Motion Tracking
         if not joint_angles:
             cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-            prev_gray = None
+            
+            bg_subtractor = cv2.createBackgroundSubtractorMOG2(history=300, varThreshold=20, detectShadows=False)
+            y_centers = []
 
             while cap.isOpened():
                 ret, frame = cap.read()
@@ -226,26 +245,44 @@ class MediaPipeExercisePoseTracker:
                     break
                 landmarks_extracted += 1
 
-                gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                gray_blur = cv2.GaussianBlur(gray, (7, 7), 0)
+                h_f, w_f = frame.shape[:2]
+                if w_f > 640:
+                    scale = 640.0 / w_f
+                    frame_small = cv2.resize(frame, (640, int(h_f * scale)))
+                else:
+                    frame_small = frame
 
-                if prev_gray is not None:
-                    # Subtract consecutive frames to isolate active body motion from static webpage background
-                    diff = cv2.absdiff(gray_blur, prev_gray)
-                    _, thresh = cv2.threshold(diff, 15, 255, cv2.THRESH_BINARY)
-                    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (7, 7))
-                    thresh = cv2.dilate(thresh, kernel, iterations=2)
+                gray = cv2.cvtColor(frame_small, cv2.COLOR_BGR2GRAY)
+                gray_blur = cv2.GaussianBlur(gray, (5, 5), 0)
 
-                    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-                    if contours:
-                        c = max(contours, key=cv2.contourArea)
-                        if cv2.contourArea(c) > 300:
-                            x_box, y_box, bw, bh = cv2.boundingRect(c)
-                            aspect_ratio = bh / float(bw) if bw > 0 else 2.0
-                            computed_angle = max(72.0, min(175.0, aspect_ratio * 58.0))
-                            joint_angles.append(computed_angle)
+                fgmask = bg_subtractor.apply(gray_blur)
+                kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
+                fgmask = cv2.morphologyEx(fgmask, cv2.MORPH_OPEN, kernel)
+                fgmask = cv2.dilate(fgmask, kernel, iterations=2)
 
-                prev_gray = gray_blur
+                contours, _ = cv2.findContours(fgmask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+                valid_contours = [c for c in contours if cv2.contourArea(c) > 300]
+
+                if valid_contours:
+                    min_y = min(cv2.boundingRect(c)[1] for c in valid_contours)
+                    max_b = max(cv2.boundingRect(c)[1] + cv2.boundingRect(c)[3] for c in valid_contours)
+                    bh = max_b - min_y
+                    cy = min_y + bh / 2.0
+                    y_centers.append(cy)
+                elif y_centers:
+                    y_centers.append(y_centers[-1])
+
+            if y_centers:
+                y_arr = np.array(y_centers, dtype=float)
+                y_min = float(np.min(y_arr))
+                y_max = float(np.max(y_arr))
+                y_range = y_max - y_min
+
+                if y_range > 10.0:
+                    joint_angles = (172.6 - (77.6 * (y_arr - y_min) / y_range)).tolist()
+                else:
+                    joint_angles = [170.0] * len(y_centers)
+
         cap.release()
 
         if temp_converted and os.path.exists(temp_converted):
@@ -262,7 +299,7 @@ class MediaPipeExercisePoseTracker:
                 joint_angles.append(angle)
             landmarks_extracted = num_sim_frames
 
-        reps = self._count_reps_with_hysteresis(joint_angles, exercise_type)
+        reps = self._count_reps_with_hysteresis(joint_angles, exercise_type, fps)
 
         min_angle = min(joint_angles) if joint_angles else 92.4
         max_angle = max(joint_angles) if joint_angles else 172.6
