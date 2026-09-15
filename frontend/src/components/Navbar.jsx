@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Swords, Trees, Video, User, Utensils, HeartPulse, Bot, Trophy, Users, LayoutDashboard, Building2, UserCheck } from 'lucide-react';
+import { Swords, Trees, Video, User, Utensils, HeartPulse, Bot, Trophy, Users, LayoutDashboard, Building2, UserCheck, UserPlus } from 'lucide-react';
 
 const DEFAULT_EMPLOYEES = [
   { id: 'EMP001', employee_id: 'EMP001', name: 'Sona VR', department: 'Alpha IT', role: 'Lead AI Engineer' },
@@ -15,7 +15,7 @@ const DEFAULT_EMPLOYEES = [
   { id: 'EMP055', employee_id: 'EMP055', name: 'Rohan Mehta', department: 'Alpha IT', role: 'Full Stack Dev' }
 ];
 
-export default function Navbar({ user, onSelectEmployee, onLogout }) {
+export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboarding }) {
   const location = useLocation();
   const [employeesList, setEmployeesList] = useState(DEFAULT_EMPLOYEES);
 
@@ -35,10 +35,10 @@ export default function Navbar({ user, onSelectEmployee, onLogout }) {
 
   // Feature section links
   const sectionLinks = [
+    { path: '/digital-twin', label: 'Digital Twin', icon: User },
     { path: '/rivals', label: 'Rivals', icon: Swords },
     { path: '/jungle', label: 'Jungle', icon: Trees },
     { path: '/exercise', label: 'Exercise CV', icon: Video },
-    { path: '/digital-twin', label: 'Digital Twin', icon: User },
     { path: '/food', label: 'Food Recs', icon: Utensils },
     { path: '/health', label: 'Health Tasks', icon: HeartPulse },
     { path: '/coach', label: 'GenAI Coach', icon: Bot },
@@ -64,7 +64,7 @@ export default function Navbar({ user, onSelectEmployee, onLogout }) {
         {/* TOP BAR: Brand Logo + Prominent 2 Dashboard Buttons + Employee Selector Dropdown */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-3 pb-2 border-b border-[#2a3442]">
           {/* Logo */}
-          <Link to="/rivals" className="flex items-center gap-2.5 group">
+          <Link to="/digital-twin" className="flex items-center gap-2.5 group">
             <div className="w-9 h-9 bg-[#00f0ff] text-black font-black text-lg flex items-center justify-center border-2 border-white shadow-[0_0_12px_#00f0ff]">
               PD
             </div>
@@ -82,7 +82,7 @@ export default function Navbar({ user, onSelectEmployee, onLogout }) {
           <div className="flex items-center gap-3">
             {/* Employee Dashboard Button */}
             <Link
-              to="/rivals"
+              to="/digital-twin"
               className={`flex items-center gap-2 px-4 py-2 text-xs md:text-sm font-black uppercase tracking-wider border-2 transition-all shadow-md ${
                 location.pathname === '/rivals' || location.pathname === '/digital-twin'
                   ? 'bg-[#00f0ff] text-black border-white shadow-[0_0_15px_#00f0ff] scale-105'
@@ -107,20 +107,28 @@ export default function Navbar({ user, onSelectEmployee, onLogout }) {
             </Link>
           </div>
 
-          {/* 🌟 SELECT EMPLOYEE DROPDOWN 🌟 */}
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 bg-[#16202e] border-2 border-[#00f0ff] px-3 py-1.5 rounded shadow-[0_0_10px_rgba(0,240,255,0.3)]">
+          {/* 🌟 SELECT / ONBOARD EMPLOYEE BUTTON & DROPDOWN 🌟 */}
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={onOpenOnboarding}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#00ff66]/10 border-2 border-[#00ff66] text-[#00ff66] hover:bg-[#00ff66] hover:text-black font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_12px_rgba(0,255,102,0.3)] cursor-pointer"
+            >
+              <UserPlus size={15} />
+              <span>⚡ ONBOARD / SWITCH</span>
+            </button>
+
+            <div className="flex items-center gap-1.5 bg-[#16202e] border-2 border-[#00f0ff] px-2.5 py-1.5 rounded shadow-[0_0_10px_rgba(0,240,255,0.3)]">
               <UserCheck size={16} className="text-[#00f0ff]" />
               <select
                 value={currentEmpId}
                 onChange={handleDropdownChange}
-                className="bg-transparent text-white font-mono text-xs font-bold focus:outline-none cursor-pointer pr-2 max-w-[220px]"
+                className="bg-transparent text-white font-mono text-xs font-bold focus:outline-none cursor-pointer pr-1 max-w-[180px]"
               >
                 {employeesList.map((emp) => {
                   const empIdVal = emp.employee_id || emp.id;
                   return (
                     <option key={empIdVal} value={empIdVal} className="bg-[#141923] text-white">
-                      {empIdVal} — {emp.name} ({emp.department})
+                      {empIdVal} — {emp.name}
                     </option>
                   );
                 })}

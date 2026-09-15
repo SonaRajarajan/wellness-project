@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import EmployeeOnboardingModal from './components/EmployeeOnboardingModal';
 import ArchitectureView from './pages/ArchitectureView';
 import Login from './pages/Login';
 import RivalsMode from './pages/RivalsMode';
@@ -25,6 +26,8 @@ export default function App() {
     activity_level: 'Moderately Active'
   });
 
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState(true);
+
   const handleSelectEmployee = (selectedEmp) => {
     setUser({
       ...selectedEmp,
@@ -34,23 +37,28 @@ export default function App() {
   };
 
   const handleLogout = () => {
-    setUser({
-      id: 'EMP001',
-      employee_id: 'EMP001',
-      name: 'Sona VR',
-      department: 'Alpha IT',
-      email: 'sona.vr@pixel.com'
-    });
+    setIsOnboardingOpen(true);
   };
 
   return (
     <Router>
       <div className="min-h-screen bg-[#0b0e14] text-white flex flex-col font-mono selection:bg-[#00f0ff] selection:text-black">
-        <Navbar user={user} onSelectEmployee={handleSelectEmployee} onLogout={handleLogout} />
+        <Navbar
+          user={user}
+          onSelectEmployee={handleSelectEmployee}
+          onLogout={handleLogout}
+          onOpenOnboarding={() => setIsOnboardingOpen(true)}
+        />
+
+        <EmployeeOnboardingModal
+          isOpen={isOnboardingOpen}
+          onClose={() => setIsOnboardingOpen(false)}
+          onSelectEmployee={handleSelectEmployee}
+        />
 
         <main className="flex-1 pb-12">
           <Routes>
-            <Route path="/" element={<Navigate to="/rivals" replace />} />
+            <Route path="/" element={<Navigate to="/digital-twin" replace />} />
             <Route path="/architecture" element={<ArchitectureView />} />
             <Route path="/login" element={<Login onLoginSuccess={(u) => setUser(u)} />} />
             <Route path="/rivals" element={<RivalsMode user={user} />} />
@@ -63,7 +71,7 @@ export default function App() {
             <Route path="/leaderboard" element={<Leaderboard user={user} />} />
             <Route path="/hr-dashboard" element={<HRDashboard user={user} onSelectEmployee={handleSelectEmployee} />} />
             <Route path="/players" element={<Players user={user} onSelectEmployee={handleSelectEmployee} />} />
-            <Route path="*" element={<Navigate to="/rivals" replace />} />
+            <Route path="*" element={<Navigate to="/digital-twin" replace />} />
           </Routes>
         </main>
 
