@@ -215,9 +215,11 @@ class MediaPipeExercisePoseTracker:
         except Exception as mpe:
             print(f"[MediaPipePoseTracker] MediaPipe Solutions notice: {mpe}")
 
-        # If MediaPipe Solutions unavailable or zero landmarks extracted, process video using OpenCV Contour Tracker
+        # If MediaPipe Solutions unavailable or zero landmarks extracted, process video using Frame-Difference Motion Tracking
         if not joint_angles:
             cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            prev_gray = None
+
             while cap.isOpened():
                 ret, frame = cap.read()
                 if not ret:
@@ -225,17 +227,25 @@ class MediaPipeExercisePoseTracker:
                 landmarks_extracted += 1
 
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                blur = cv2.GaussianBlur(gray, (5, 5), 0)
-                _, thresh = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+                gray_blur = cv2.GaussianBlur(gray, (7, 7), 0)
 
-                contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-                if contours:
-                    c = max(contours, key=cv2.contourArea)
-                    if cv2.contourArea(c) > 2000:
-                        x_box, y_box, bw, bh = cv2.boundingRect(c)
-                        aspect_ratio = bh / float(bw) if bw > 0 else 2.0
-                        computed_angle = max(72.0, min(175.0, aspect_ratio * 58.0))
-                        joint_angles.append(computed_angle)
+                if prev_gray is not None:
+                    # Subtract consecutive frames to isolate active body motion from static webpage background
+                    diff = cv2.absdiff(gray_blur, prev_gray)
+                    _, thresh = cv2.threshold(diff, 15, 255, cv2.THRESH_BINARY)
+                    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (7, 7))
+                    thresh = cv2.dilate(thresh, kernel, iterations=2)
+
+                    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+                    if contours:
+                        c = max(contours, key=cv2.contourArea)
+                        if cv2.contourArea(c) > 300:
+                            x_box, y_box, bw, bh = cv2.boundingRect(c)
+                            aspect_ratio = bh / float(bw) if bw > 0 else 2.0
+                            computed_angle = max(72.0, min(175.0, aspect_ratio * 58.0))
+                            joint_angles.append(computed_angle)
+
+                prev_gray = gray_blur
         cap.release()
 
         if temp_converted and os.path.exists(temp_converted):
