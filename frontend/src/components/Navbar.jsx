@@ -27,17 +27,15 @@ export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboard
       .catch(() => {});
   }, []);
 
-  // Feature section links
+  // Feature section links for Employee Dashboard (personal features only)
   const sectionLinks = [
-    { path: '/digital-twin', label: 'Digital Twin', icon: User, requiresHrPin: false },
-    { path: '/rivals', label: 'Rivals', icon: Swords, requiresHrPin: false },
-    { path: '/jungle', label: 'Jungle', icon: Trees, requiresHrPin: false },
-    { path: '/exercise', label: 'Exercise CV', icon: Video, requiresHrPin: false },
-    { path: '/food', label: 'Food Recs', icon: Utensils, requiresHrPin: false },
-    { path: '/health', label: 'Health Tasks', icon: HeartPulse, requiresHrPin: false },
-    { path: '/coach', label: 'GenAI Coach', icon: Bot, requiresHrPin: false },
-    { path: '/leaderboard', label: 'Leaderboard', icon: Trophy, requiresHrPin: false },
-    { path: '/players', label: 'Players', icon: Users, requiresHrPin: true },
+    { path: '/digital-twin', label: 'Digital Twin', icon: User },
+    { path: '/rivals', label: 'Rivals', icon: Swords },
+    { path: '/jungle', label: 'Jungle', icon: Trees },
+    { path: '/exercise', label: 'Exercise CV', icon: Video },
+    { path: '/food', label: 'Food Recs', icon: Utensils },
+    { path: '/health', label: 'Health Tasks', icon: HeartPulse },
+    { path: '/coach', label: 'GenAI Coach', icon: Bot },
   ];
 
   const currentEmpId = user?.employee_id || user?.id || 'EMP001';
@@ -61,17 +59,10 @@ export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboard
     }
   };
 
-  const handleSectionLinkClick = (e, link) => {
-    if (link.requiresHrPin && !isHrAuthenticated) {
-      e.preventDefault();
-      if (onOpenHrPinModal) onOpenHrPinModal(link.path);
-    }
-  };
-
   return (
-    <nav className="bg-[#0e131b] border-b-2 border-[#00f0ff] px-4 py-3 sticky top-0 z-50 shadow-[0_4px_25px_rgba(0,240,255,0.2)]">
+    <nav className="bg-[#0e131b] border-b-2 border-[#00f0ff] px-4 py-3 sticky top-0 z-50 shadow-[0_4px_25px_rgba(0,240,255,0.2)] font-mono">
       <div className="max-w-7xl mx-auto flex flex-col space-y-3">
-        {/* TOP BAR: Brand Logo + Prominent 2 Dashboard Buttons + Employee Selector Dropdown */}
+        {/* TOP BAR: Brand Logo + Prominent 2 Dashboard Buttons + Active Profile / HR Switcher */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-3 pb-2 border-b border-[#2a3442]">
           {/* Logo */}
           <Link to="/digital-twin" className="flex items-center gap-2.5 group">
@@ -94,7 +85,7 @@ export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboard
             <Link
               to="/digital-twin"
               className={`flex items-center gap-2 px-4 py-2 text-xs md:text-sm font-black uppercase tracking-wider border-2 transition-all shadow-md ${
-                location.pathname === '/rivals' || location.pathname === '/digital-twin'
+                location.pathname !== '/hr-dashboard'
                   ? 'bg-[#00f0ff] text-black border-white shadow-[0_0_15px_#00f0ff] scale-105'
                   : 'bg-[#141c28] text-[#00f0ff] border-[#00f0ff]/60 hover:bg-[#00f0ff] hover:text-black hover:scale-105'
               }`}
@@ -124,17 +115,43 @@ export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboard
             </button>
           </div>
 
-          {/* 🌟 SELECT / ONBOARD EMPLOYEE BUTTON & DROPDOWN 🌟 */}
+          {/* 🌟 USER / HR SWITCHER & ONBOARDING 🌟 */}
           <div className="flex flex-wrap items-center gap-2">
-            {isHrAuthenticated && (
-              <button
-                onClick={onLockHr}
-                title="Lock HR Security Mode"
-                className="flex items-center gap-1 px-2.5 py-1.5 bg-red-950/80 border border-red-500 text-red-300 hover:bg-red-600 hover:text-white text-[11px] font-bold font-mono transition-all cursor-pointer"
-              >
-                <Lock size={12} />
-                <span>LOCK HR</span>
-              </button>
+            {isHrAuthenticated ? (
+              <>
+                <button
+                  onClick={onLockHr}
+                  title="Lock HR Security Mode"
+                  className="flex items-center gap-1 px-2.5 py-1.5 bg-red-950/80 border border-red-500 text-red-300 hover:bg-red-600 hover:text-white text-[11px] font-bold font-mono transition-all cursor-pointer"
+                >
+                  <Lock size={12} />
+                  <span>LOCK HR</span>
+                </button>
+
+                <div className="flex items-center gap-1.5 bg-[#16202e] border-2 border-[#00f0ff] px-2.5 py-1.5 rounded shadow-[0_0_10px_rgba(0,240,255,0.3)]">
+                  <UserCheck size={16} className="text-[#00f0ff]" />
+                  <select
+                    value={currentEmpId}
+                    onChange={handleDropdownChange}
+                    className="bg-transparent text-white font-mono text-xs font-bold focus:outline-none cursor-pointer pr-1 max-w-[180px]"
+                  >
+                    {employeesList.map((emp) => {
+                      const empIdVal = emp.employee_id || emp.id;
+                      return (
+                        <option key={empIdVal} value={empIdVal} className="bg-[#141923] text-white">
+                          {empIdVal} — {emp.name}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+              </>
+            ) : (
+              <div className="flex items-center gap-2 bg-[#16202e] border border-[#00f0ff]/50 px-3 py-1.5 rounded text-xs font-mono">
+                <UserCheck size={16} className="text-[#00f0ff]" />
+                <span className="text-[#00ff66] font-bold">{userName}</span>
+                <span className="text-gray-400 text-[10px]">({currentEmpId})</span>
+              </div>
             )}
 
             <button
@@ -142,31 +159,8 @@ export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboard
               className="flex items-center gap-1.5 px-3 py-1.5 bg-[#00ff66]/10 border-2 border-[#00ff66] text-[#00ff66] hover:bg-[#00ff66] hover:text-black font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_12px_rgba(0,255,102,0.3)] cursor-pointer"
             >
               <UserPlus size={15} />
-              <span>⚡ ONBOARD / SWITCH</span>
+              <span>⚡ ONBOARD</span>
             </button>
-
-            <div className="flex items-center gap-1.5 bg-[#16202e] border-2 border-[#00f0ff] px-2.5 py-1.5 rounded shadow-[0_0_10px_rgba(0,240,255,0.3)]">
-              <UserCheck size={16} className="text-[#00f0ff]" />
-              <select
-                value={currentEmpId}
-                onChange={handleDropdownChange}
-                className="bg-transparent text-white font-mono text-xs font-bold focus:outline-none cursor-pointer pr-1 max-w-[180px]"
-              >
-                {employeesList.map((emp) => {
-                  const empIdVal = emp.employee_id || emp.id;
-                  return (
-                    <option key={empIdVal} value={empIdVal} className="bg-[#141923] text-white">
-                      {empIdVal} — {emp.name}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
-
-            <div className="text-right hidden sm:block">
-              <div className="text-xs text-[#00ff66] font-extrabold font-mono">{userName}</div>
-              <div className="text-[10px] text-gray-400 font-mono">{userDept}</div>
-            </div>
 
             <button
               onClick={onLogout}
@@ -177,7 +171,7 @@ export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboard
           </div>
         </div>
 
-        {/* BOTTOM ROW: Feature Section Navigation Links */}
+        {/* BOTTOM ROW: Employee Personal Feature Section Navigation Links */}
         <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1">
           {sectionLinks.map((link) => {
             const Icon = link.icon;
@@ -186,8 +180,7 @@ export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboard
               <Link
                 key={link.path}
                 to={link.path}
-                onClick={(e) => handleSectionLinkClick(e, link)}
-                className={`flex items-center gap-1 px-2.5 py-1 border text-[11px] font-semibold uppercase tracking-wider transition-all ${
+                className={`flex items-center gap-1 px-3 py-1 border text-[11px] font-semibold uppercase tracking-wider transition-all ${
                   isActive
                     ? 'bg-[#182638] text-[#00f0ff] border-[#00f0ff] font-bold shadow-[0_0_6px_#00f0ff]'
                     : 'bg-[#141923] text-gray-400 border-[#2a3442] hover:border-gray-400 hover:text-white'
@@ -195,9 +188,6 @@ export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboard
               >
                 <Icon size={13} />
                 <span>{link.label}</span>
-                {link.requiresHrPin && !isHrAuthenticated && (
-                  <Lock size={10} className="text-red-400 ml-0.5" />
-                )}
               </Link>
             );
           })}
