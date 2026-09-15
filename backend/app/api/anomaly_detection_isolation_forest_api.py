@@ -7,11 +7,17 @@ router = APIRouter(prefix="/anomaly-detection", tags=["7. Anomaly Detection (Iso
 detector = IsolationForestAnomalyDetector()
 
 @router.post("/evaluate")
-def evaluate_motion_anomalies(sensor_logs: List[dict]):
+def evaluate_motion_anomalies(payload: dict):
     """
     7. Anomaly Detection: Isolation Forest (Slide 16 / Image 3)
     """
     try:
+        if isinstance(payload, dict) and "sensor_logs" in payload:
+            sensor_logs = payload["sensor_logs"]
+        elif isinstance(payload, list):
+            sensor_logs = payload
+        else:
+            sensor_logs = [payload]
         res = detector.detect_anomalies(sensor_logs)
         return res
     except Exception as e:

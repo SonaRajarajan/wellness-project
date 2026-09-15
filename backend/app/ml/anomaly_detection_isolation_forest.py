@@ -70,10 +70,15 @@ class IsolationForestAnomalyDetector:
 
         return {
             "ml_module": "Anomaly Detection: Isolation Forest (Slide 16 / Image 3)",
+            "total_samples": len(telemetry_data),
             "total_samples_scanned": len(telemetry_data),
             "anomalies_count": len(anomalies),
+            "anomalies_detected": len(anomalies),
+            "fall_events_predicted": len([a for a in anomalies if "Fall" in a.get("risk_flag", "")]),
             "anomaly_rate_pct": round(len(anomalies) / len(telemetry_data) * 100.0, 1),
-            "anomalies_detected": anomalies
+            "anomaly_scores": [a.get("anomaly_score", 0.0) for a in anomalies],
+            "anomalies_list": anomalies,
+            "sample_evaluations": anomalies
         }
 
     def _fallback_isolation(self, X: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:

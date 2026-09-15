@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from app.config import settings
 
-DB_PATH = Path("./data/wellness.db")
+DB_PATH = Path(__file__).resolve().parent.parent / "data" / "wellness.db"
 
 def get_db_connection():
     """Returns a row-factory enabled SQLite connection."""

@@ -62,20 +62,28 @@ app.include_router(architecture_router, prefix=settings.API_V1_STR)
 
 @app.get("/")
 def root():
+    modules = [
+        "1. Health Prediction: LSTM (app/ml/health_prediction_lstm.py)",
+        "2. Exercise Detection: MediaPipe Pose (app/cv/exercise_detection_mediapipe_pose.py)",
+        "3. Exercise Classification: ST-GCN (app/cv/exercise_classification_stgcn.py)",
+        "4. Nutrition Recommendation: Collaborative Filtering (app/ml/nutrition_recommendation_collaborative_filtering.py)",
+        "5. Health Risk Prediction: XGBoost (app/ml/health_risk_prediction_xgboost.py)",
+        "6. Employee Segmentation: K-Means (app/ml/employee_segmentation_kmeans.py)",
+        "7. Anomaly Detection: Isolation Forest (app/ml/anomaly_detection_isolation_forest.py)",
+        "8. GenAI Wellness Coach: LLM + RAG + Knowledge Graph (app/rag/genai_wellness_coach_llm_rag_graph.py)"
+    ]
     return {
         "status": "healthy",
         "app_name": settings.APP_NAME,
         "docs_url": "/docs",
         "api_v1": settings.API_V1_STR,
-        "slide_16_ai_ml_modules": [
-            "1. Health Prediction: LSTM (app/ml/health_prediction_lstm.py)",
-            "2. Exercise Detection: MediaPipe Pose (app/cv/exercise_detection_mediapipe_pose.py)",
-            "3. Exercise Classification: ST-GCN (app/cv/exercise_classification_stgcn.py)",
-            "4. Nutrition Recommendation: Collaborative Filtering (app/ml/nutrition_recommendation_collaborative_filtering.py)",
-            "5. Health Risk Prediction: XGBoost (app/ml/health_risk_prediction_xgboost.py)",
-            "6. Employee Segmentation: K-Means (app/ml/employee_segmentation_kmeans.py)",
-            "7. Anomaly Detection: Isolation Forest (app/ml/anomaly_detection_isolation_forest.py)",
-            "8. GenAI Wellness Coach: LLM + RAG + Knowledge Graph (app/rag/genai_wellness_coach_llm_rag_graph.py)"
+        "ai_ml_modules": modules,
+        "slide_16_ai_ml_modules": modules,
+        "kaggle_datasets": [
+            "MotionSense HAR Dataset",
+            "Indian Food & Nutrition Dataset",
+            "Wearables Master Employee Dataset",
+            "Exercise Recognition MediaPipe Dataset"
         ]
     }
 
