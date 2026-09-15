@@ -244,6 +244,57 @@ def register_new_employee(req: NewEmployeeRegistrationRequest):
     conn.commit()
     conn.close()
 
+    # 6. Also sync with employee_master_dataset.csv so all 8 Slide 16 AI/ML modules see the new employee
+    csv_path = Path(__file__).parent.parent.parent / "data" / "csv" / "employee_master_dataset.csv"
+    if csv_path.exists():
+        try:
+            import pandas as pd
+            df_existing = pd.read_csv(csv_path)
+            new_row = {
+                "UserId": new_emp_id,
+                "employee_id": new_emp_id,
+                "name": req.name,
+                "department": req.department,
+                "role": req.role,
+                "age": req.age,
+                "ActivityDate": "2026-09-15",
+                "TotalSteps": step_count,
+                "step_count": step_count,
+                "TotalDistance_km": round(step_count * 0.00075, 2),
+                "VeryActiveMinutes": 25,
+                "FairlyActiveMinutes": 15,
+                "LightlyActiveMinutes": 180,
+                "SedentaryMinutes": 500,
+                "Calories": calories_burned,
+                "calories_burned": calories_burned,
+                "HeartRate_bpm": heart_rate,
+                "HRV_ms": 45.0,
+                "SleepHours": sleep_hours,
+                "sleep_hours": sleep_hours,
+                "TotalTimeInBed_hrs": round(sleep_hours + 0.6, 1),
+                "SpO2_percent": spo2,
+                "in_time": "09:00",
+                "out_time": "17:00",
+                "workload_hours": workload,
+                "leave_days_taken": 0,
+                "goals": req.goals or "Weight Loss & Fat Burn",
+                "mood": req.mood or "Energetic & Focused",
+                "symptoms": req.symptoms or "None / Healthy",
+                "feedback": "Newly registered employee digital twin synthesized.",
+                "habits": req.habits or "Regular Hydration",
+                "burnout_risk_score": round(burnout_score / 100.0, 3),
+                "risk_category": f"{risk_category} Risk",
+                "cluster_name": cluster_name,
+                "anomaly_flag": 0,
+                "composite_wellness_score": 8.2,
+                "points": 1250
+            }
+            df_existing = df_existing[df_existing["employee_id"] != new_emp_id]
+            df_updated = pd.concat([df_existing, pd.DataFrame([new_row])], ignore_index=True)
+            df_updated.to_csv(csv_path, index=False)
+        except Exception as csv_err:
+            print(f"CSV sync notice: {csv_err}")
+
     new_employee_obj = {
         "id": new_emp_id,
         "employee_id": new_emp_id,

@@ -299,6 +299,28 @@ def get_food_recommendations(employee_id: Optional[str] = Query("EMP001")):
             sleep = float(r.get("SleepHours", r.get("sleep_hours", 7.5)))
             hrv = float(r.get("HRV_ms", r.get("hrv_ms", 55.4)))
 
+    DB_PATH = Path(__file__).parent.parent.parent / "data" / "wellness.db"
+    if DB_PATH.exists():
+        try:
+            import sqlite3
+            conn = sqlite3.connect(DB_PATH)
+            conn.row_factory = sqlite3.Row
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM employees WHERE employee_id = ?", (employee_id,))
+            emp_db = cur.fetchone()
+            if emp_db:
+                name = emp_db["name"]
+                department = emp_db["department"]
+                cur.execute("SELECT * FROM physiological_metrics WHERE employee_id = ? ORDER BY id DESC LIMIT 1", (employee_id,))
+                pm = cur.fetchone()
+                if pm:
+                    steps = pm["step_count"] or steps
+                    sleep = pm["sleep_hours"] or sleep
+                    calories = int(pm["calories_burned"] or calories)
+            conn.close()
+        except Exception:
+            pass
+
     user_features = [steps / 10000.0, sleep / 8.0, hrv / 60.0]
     dummy_peers = np.random.normal(loc=[0.8, 0.9, 0.85], scale=[0.1, 0.1, 0.1], size=(20, 3))
     cf_results = cf_engine.predict_collaborative_ratings(employee_id, user_features, dummy_peers)

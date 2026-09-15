@@ -67,6 +67,32 @@ def get_digital_twin_profile(employee_id: str):
             symptom = str(r.get("symptoms", symptom))
             habit = str(r.get("habits", habit))
 
+    if DB_PATH.exists():
+        try:
+            conn = sqlite3.connect(DB_PATH)
+            conn.row_factory = sqlite3.Row
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM employees WHERE employee_id = ?", (employee_id,))
+            emp_db = cur.fetchone()
+            if emp_db:
+                name = emp_db["name"]
+                department = emp_db["department"]
+                role = emp_db["role"]
+                cur.execute("SELECT * FROM physiological_metrics WHERE employee_id = ? ORDER BY id DESC LIMIT 1", (employee_id,))
+                pm = cur.fetchone()
+                if pm:
+                    steps = pm["step_count"] or steps
+                    sleep_hours = pm["sleep_hours"] or sleep_hours
+                    stress_level = pm["stress_level"] or stress_level
+                cur.execute("SELECT * FROM health_risk_records WHERE employee_id = ? ORDER BY id DESC LIMIT 1", (employee_id,))
+                hr = cur.fetchone()
+                if hr:
+                    stress_level = round(hr["burnout_score"] / 10.0, 1)
+                    workload_hours = hr["max_workload_hours"]
+            conn.close()
+        except Exception:
+            pass
+
     ws = scorer.calculate_composite_wellness_score(
         daily_steps=steps, sleep_hours=sleep_hours, workout_mins=35,
         intensity_factor=1.0, protein_g=65.0, fiber_g=15.0, fat_g=20.0, sugar_g=10.0
