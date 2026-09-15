@@ -7,8 +7,10 @@ export default function ExerciseAnalytics() {
   const [videoPreviewUrl, setVideoPreviewUrl] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [exerciseData, setExerciseData] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const fileInputRef = useRef(null);
+  const videoRef = useRef(null);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -17,11 +19,28 @@ export default function ExerciseAnalytics() {
       setExerciseData(null); // Clear previous evaluation results when a new video is selected
       const url = URL.createObjectURL(file);
       setVideoPreviewUrl(url);
+
+      // Automatically play video in background when file is loaded
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.currentTime = 0;
+          videoRef.current.play().catch(() => {});
+          setIsPlaying(true);
+        }
+      }, 250);
     }
   };
 
   const handleAnalyze = async () => {
     setAnalyzing(true);
+    
+    // Play video in background while analyzing
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.play().catch(() => {});
+      setIsPlaying(true);
+    }
+
     try {
       if (videoFile) {
         // Upload video file to FastAPI backend for MediaPipe & ST-GCN analysis
@@ -157,11 +176,54 @@ export default function ExerciseAnalytics() {
           {/* Video Container / Preview */}
           <div className="aspect-video bg-slate-900 border border-[#00f0ff]/40 flex flex-col items-center justify-center relative p-2 overflow-hidden">
             {videoPreviewUrl ? (
-              <video
-                src={videoPreviewUrl}
-                controls
-                className="w-full h-full object-contain z-10"
-              />
+              <div className="relative w-full h-full flex items-center justify-center">
+                <video
+                  ref={videoRef}
+                  src={videoPreviewUrl}
+                  controls
+                  autoPlay
+                  loop
+                  onPlay={() => setIsPlaying(true)}
+                  onPause={() => setIsPlaying(false)}
+                  className="w-full h-full object-contain z-10 rounded border border-[#00f0ff]/30"
+                />
+
+                {/* AI Scanning & Pose HUD Overlay on Playing Video */}
+                {analyzing && (
+                  <div className="absolute inset-0 z-20 pointer-events-none bg-purple-950/30 flex flex-col justify-between p-4 border-2 border-[#00f0ff]/80 animate-pulse">
+                    <div className="flex items-center justify-between bg-black/80 backdrop-blur px-3 py-1.5 rounded border border-[#00f0ff]/40">
+                      <span className="text-[10px] font-mono text-[#00f0ff] uppercase flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#00ff66] animate-ping" />
+                        MEDIAPIPE 3D LANDMARK MESH SCANNER ACTIVE
+                      </span>
+                      <span className="text-[10px] font-mono text-purple-300">EXTRACTING 33 KEYPOINTS...</span>
+                    </div>
+
+                    <div className="w-full h-0.5 bg-gradient-to-r from-transparent via-[#00f0ff] to-transparent shadow-[0_0_15px_#00f0ff] animate-bounce" />
+
+                    <div className="bg-black/90 backdrop-blur p-2 border border-purple-500/60 text-center">
+                      <span className="text-xs font-bold text-white uppercase tracking-wider">
+                        ST-GCN SPATIO-TEMPORAL GRAPH CONVOLUTION CLASSIFYING REPS & POSTURE FORM...
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Post-Analysis AI Overlay Badge on Playing Video */}
+                {exerciseData && !analyzing && (
+                  <div className="absolute top-4 left-4 z-20 pointer-events-none bg-black/85 border border-[#00ff66] px-3.5 py-2.5 rounded shadow-xl backdrop-blur space-y-1">
+                    <div className="text-[10px] font-mono text-[#00ff66] font-bold uppercase flex items-center gap-1.5">
+                      <CheckCircle2 size={13} />
+                      AI BIOMECHANICAL EVALUATION COMPLETE
+                    </div>
+                    <div className="text-xs font-extrabold text-white flex items-center gap-3">
+                      <span>REPS: <span className="text-[#00f0ff] font-black text-sm">{exerciseData.reps_detected}</span></span>
+                      <span>SCORE: <span className="text-[#00ff66] font-black text-sm">{exerciseData.form_quality_score}%</span></span>
+                      <span>ANGLE: <span className="text-purple-300 font-black text-sm">{exerciseData.min_joint_angle_deg}°</span></span>
+                    </div>
+                  </div>
+                )}
+              </div>
             ) : (
               <>
                 <div className="absolute inset-0 bg-[radial-gradient(#00f0ff_1px,transparent_1px)] [background-size:16px_16px] opacity-20" />
