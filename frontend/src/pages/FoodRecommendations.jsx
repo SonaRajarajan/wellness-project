@@ -77,9 +77,9 @@ export default function FoodRecommendations({ user }) {
       if (res.ok) {
         const data = await res.json();
         setMeta({
-          personal_goal: data.personal_goal || meta.personal_goal,
-          current_mood: data.current_mood || meta.current_mood,
-          active_symptom: data.active_symptom || meta.active_symptom,
+          personal_goal: user?.goals || data.personal_goal || meta.personal_goal,
+          current_mood: user?.mood || data.current_mood || meta.current_mood,
+          active_symptom: user?.symptoms || data.active_symptom || meta.active_symptom,
           daily_calorie_burn: data.daily_calorie_burn || meta.daily_calorie_burn,
           peer_cosine_sim: data.peer_cosine_similarity || 0.99
         });
@@ -93,6 +93,12 @@ export default function FoodRecommendations({ user }) {
   };
 
   useEffect(() => {
+    setMeta(prev => ({
+      ...prev,
+      personal_goal: user?.goals || prev.personal_goal,
+      current_mood: user?.mood || prev.current_mood,
+      active_symptom: user?.symptoms || prev.active_symptom
+    }));
     fetchRecommendations();
   }, [empId, user]);
 
