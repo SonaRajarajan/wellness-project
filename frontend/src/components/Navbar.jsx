@@ -1,25 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Swords, Trees, Video, User, Utensils, HeartPulse, Bot, Trophy, Users, LayoutDashboard, Building2, UserCheck, UserPlus } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Swords, Trees, Video, User, Utensils, HeartPulse, Bot, Trophy, Users, LayoutDashboard, Building2, UserCheck, UserPlus, Lock, Unlock } from 'lucide-react';
 
 const DEFAULT_EMPLOYEES = [
   { id: 'EMP001', employee_id: 'EMP001', name: 'Sona VR', department: 'Alpha IT', role: 'Lead AI Engineer' },
   { id: 'EMP002', employee_id: 'EMP002', name: 'Priya Kapoor', department: 'Beta IT', role: 'Data Analyst' },
   { id: 'EMP003', employee_id: 'EMP003', name: 'Kavya Patel', department: 'Engineering', role: 'DevOps Engineer' },
   { id: 'EMP004', employee_id: 'EMP004', name: 'Raj Verma', department: 'Operations', role: 'Ops Manager' },
-  { id: 'EMP005', employee_id: 'EMP005', name: 'Amit Sharma', department: 'Design', role: 'UI/UX Designer' },
-  { id: 'EMP039', employee_id: 'EMP039', name: 'Vikram Singh', department: 'Sales', role: 'Sales Lead' },
-  { id: 'EMP096', employee_id: 'EMP096', name: 'Deepika Bhat', department: 'Finance', role: 'Financial Analyst' },
-  { id: 'EMP012', employee_id: 'EMP012', name: 'Neha Gupta', department: 'HR', role: 'HR Specialist' },
-  { id: 'EMP024', employee_id: 'EMP024', name: 'Ananya Reddy', department: 'Finance', role: 'Risk Officer' },
-  { id: 'EMP055', employee_id: 'EMP055', name: 'Rohan Mehta', department: 'Alpha IT', role: 'Full Stack Dev' }
+  { id: 'EMP005', employee_id: 'EMP005', name: 'Amit Sharma', department: 'Design', role: 'UI/UX Designer' }
 ];
 
-export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboarding }) {
+export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboarding, isHrAuthenticated, onOpenHrPinModal, onLockHr }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [employeesList, setEmployeesList] = useState(DEFAULT_EMPLOYEES);
 
-  // Fetch all 130 registered employees dynamically from backend API /api/v1/players
+  // Fetch all registered employees dynamically from backend API /api/v1/players
   useEffect(() => {
     fetch('http://localhost:8000/api/v1/players')
       .then((res) => res.json())
@@ -28,22 +24,20 @@ export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboard
           setEmployeesList(data.players);
         }
       })
-      .catch((err) => {
-        console.warn('Using default employee list fallback');
-      });
+      .catch(() => {});
   }, []);
 
   // Feature section links
   const sectionLinks = [
-    { path: '/digital-twin', label: 'Digital Twin', icon: User },
-    { path: '/rivals', label: 'Rivals', icon: Swords },
-    { path: '/jungle', label: 'Jungle', icon: Trees },
-    { path: '/exercise', label: 'Exercise CV', icon: Video },
-    { path: '/food', label: 'Food Recs', icon: Utensils },
-    { path: '/health', label: 'Health Tasks', icon: HeartPulse },
-    { path: '/coach', label: 'GenAI Coach', icon: Bot },
-    { path: '/leaderboard', label: 'Leaderboard', icon: Trophy },
-    { path: '/players', label: 'Players', icon: Users },
+    { path: '/digital-twin', label: 'Digital Twin', icon: User, requiresHrPin: false },
+    { path: '/rivals', label: 'Rivals', icon: Swords, requiresHrPin: false },
+    { path: '/jungle', label: 'Jungle', icon: Trees, requiresHrPin: false },
+    { path: '/exercise', label: 'Exercise CV', icon: Video, requiresHrPin: false },
+    { path: '/food', label: 'Food Recs', icon: Utensils, requiresHrPin: false },
+    { path: '/health', label: 'Health Tasks', icon: HeartPulse, requiresHrPin: false },
+    { path: '/coach', label: 'GenAI Coach', icon: Bot, requiresHrPin: false },
+    { path: '/leaderboard', label: 'Leaderboard', icon: Trophy, requiresHrPin: false },
+    { path: '/players', label: 'Players', icon: Users, requiresHrPin: true },
   ];
 
   const currentEmpId = user?.employee_id || user?.id || 'EMP001';
@@ -55,6 +49,22 @@ export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboard
     const found = employeesList.find((emp) => (emp.employee_id || emp.id) === selectedId);
     if (found && onSelectEmployee) {
       onSelectEmployee(found);
+    }
+  };
+
+  const handleHrDashboardClick = (e) => {
+    e.preventDefault();
+    if (!isHrAuthenticated) {
+      if (onOpenHrPinModal) onOpenHrPinModal('/hr-dashboard');
+    } else {
+      navigate('/hr-dashboard');
+    }
+  };
+
+  const handleSectionLinkClick = (e, link) => {
+    if (link.requiresHrPin && !isHrAuthenticated) {
+      e.preventDefault();
+      if (onOpenHrPinModal) onOpenHrPinModal(link.path);
     }
   };
 
@@ -93,10 +103,10 @@ export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboard
               <span>📱 EMPLOYEE DASHBOARD</span>
             </Link>
 
-            {/* HR Enterprise Dashboard Button */}
-            <Link
-              to="/hr-dashboard"
-              className={`flex items-center gap-2 px-4 py-2 text-xs md:text-sm font-black uppercase tracking-wider border-2 transition-all shadow-md ${
+            {/* HR Enterprise Dashboard Button (Protected by HR01S PIN) */}
+            <button
+              onClick={handleHrDashboardClick}
+              className={`flex items-center gap-2 px-4 py-2 text-xs md:text-sm font-black uppercase tracking-wider border-2 transition-all shadow-md cursor-pointer ${
                 location.pathname === '/hr-dashboard'
                   ? 'bg-[#00ff66] text-black border-white shadow-[0_0_15px_#00ff66] scale-105'
                   : 'bg-[#14261d] text-[#00ff66] border-[#00ff66]/60 hover:bg-[#00ff66] hover:text-black hover:scale-105'
@@ -104,11 +114,29 @@ export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboard
             >
               <Building2 size={18} />
               <span>🏢 HR DASHBOARD</span>
-            </Link>
+              {isHrAuthenticated ? (
+                <span className="ml-1 px-1.5 py-0.5 bg-black/40 text-[10px] text-[#00ff66] border border-[#00ff66] rounded font-mono">
+                  VERIFIED
+                </span>
+              ) : (
+                <Lock size={14} className="text-red-400 animate-pulse ml-1" />
+              )}
+            </button>
           </div>
 
           {/* 🌟 SELECT / ONBOARD EMPLOYEE BUTTON & DROPDOWN 🌟 */}
           <div className="flex flex-wrap items-center gap-2">
+            {isHrAuthenticated && (
+              <button
+                onClick={onLockHr}
+                title="Lock HR Security Mode"
+                className="flex items-center gap-1 px-2.5 py-1.5 bg-red-950/80 border border-red-500 text-red-300 hover:bg-red-600 hover:text-white text-[11px] font-bold font-mono transition-all cursor-pointer"
+              >
+                <Lock size={12} />
+                <span>LOCK HR</span>
+              </button>
+            )}
+
             <button
               onClick={onOpenOnboarding}
               className="flex items-center gap-1.5 px-3 py-1.5 bg-[#00ff66]/10 border-2 border-[#00ff66] text-[#00ff66] hover:bg-[#00ff66] hover:text-black font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_12px_rgba(0,255,102,0.3)] cursor-pointer"
@@ -142,7 +170,7 @@ export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboard
 
             <button
               onClick={onLogout}
-              className="px-3 py-1.5 bg-red-900/70 border border-red-500 text-red-300 hover:bg-red-600 hover:text-white text-xs font-bold transition-all"
+              className="px-3 py-1.5 bg-red-900/70 border border-red-500 text-red-300 hover:bg-red-600 hover:text-white text-xs font-bold transition-all cursor-pointer"
             >
               LOGOUT
             </button>
@@ -158,6 +186,7 @@ export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboard
               <Link
                 key={link.path}
                 to={link.path}
+                onClick={(e) => handleSectionLinkClick(e, link)}
                 className={`flex items-center gap-1 px-2.5 py-1 border text-[11px] font-semibold uppercase tracking-wider transition-all ${
                   isActive
                     ? 'bg-[#182638] text-[#00f0ff] border-[#00f0ff] font-bold shadow-[0_0_6px_#00f0ff]'
@@ -166,6 +195,9 @@ export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboard
               >
                 <Icon size={13} />
                 <span>{link.label}</span>
+                {link.requiresHrPin && !isHrAuthenticated && (
+                  <Lock size={10} className="text-red-400 ml-0.5" />
+                )}
               </Link>
             );
           })}
@@ -174,3 +206,4 @@ export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboard
     </nav>
   );
 }
+

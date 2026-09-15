@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Search, Filter, ShieldCheck, ExternalLink, Eye } from 'lucide-react';
+import { Users, Search, Filter, ShieldCheck, ExternalLink, Eye, Lock, ShieldAlert, KeyRound, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-export default function Players({ user, onSelectEmployee }) {
+export default function Players({ user, onSelectEmployee, isHrAuthenticated, onAuthenticateHr }) {
   const [players, setPlayers] = useState([
     { id: 'EMP001', employee_id: 'EMP001', name: 'Sona VR', email: 'sona.vr@pixel.com', department: 'Alpha IT', points: 3450, tier_badge: 'Alpha IT - 57 pts' },
     { id: 'EMP002', employee_id: 'EMP002', name: 'Priya Kapoor', email: 'priya.kapoor@pixel.com', department: 'Beta IT', points: 3120, tier_badge: 'Beta IT - 41 pts' },
@@ -13,6 +13,8 @@ export default function Players({ user, onSelectEmployee }) {
 
   const [search, setSearch] = useState('');
   const [department, setDepartment] = useState('All Departments');
+  const [inputPin, setInputPin] = useState('');
+  const [pinError, setPinError] = useState('');
   const navigate = useNavigate();
 
   const fetchPlayers = async () => {
@@ -32,8 +34,10 @@ export default function Players({ user, onSelectEmployee }) {
   };
 
   useEffect(() => {
-    fetchPlayers();
-  }, [search, department]);
+    if (isHrAuthenticated) {
+      fetchPlayers();
+    }
+  }, [search, department, isHrAuthenticated]);
 
   const handleViewPlayerProfile = (player) => {
     if (onSelectEmployee) {
@@ -42,6 +46,74 @@ export default function Players({ user, onSelectEmployee }) {
     // Navigate immediately to Digital Twin profile dashboard
     navigate('/digital-twin');
   };
+
+  if (!isHrAuthenticated) {
+    const handleVerifyPin = (e) => {
+      e.preventDefault();
+      if (inputPin.trim().toUpperCase() === 'HR01S') {
+        setPinError('');
+        if (onAuthenticateHr) onAuthenticateHr();
+      } else {
+        setPinError('ACCESS DENIED: Invalid Security PIN. Authorized HR PIN required.');
+      }
+    };
+
+    return (
+      <div className="max-w-xl mx-auto my-12 p-6 md:p-8 bg-[#121820] border-2 border-red-500 shadow-[0_0_50px_rgba(239,68,68,0.3)] space-y-6 text-center text-white font-mono">
+        <div className="w-20 h-20 mx-auto bg-red-500/10 border-2 border-red-500 rounded-full flex items-center justify-center text-red-500 shadow-[0_0_15px_rgba(239,68,68,0.4)]">
+          <Lock size={36} />
+        </div>
+
+        <div className="space-y-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-950/80 border border-red-500 text-red-400 text-xs font-bold uppercase tracking-widest">
+            <ShieldAlert size={14} />
+            EMPLOYEE PRIVACY PROTECTION ACTIVE
+          </div>
+          <h2 className="text-2xl font-black text-white uppercase tracking-wider">
+            PLAYERS DIRECTORY ACCESS LOCKED
+          </h2>
+          <p className="text-xs text-gray-400 font-mono leading-relaxed max-w-md mx-auto">
+            Due to privacy regulations, viewing registered employees and accessing the player directory requires executive HR security authorization. Enter PIN (HR01S) to unlock.
+          </p>
+        </div>
+
+        <form onSubmit={handleVerifyPin} className="space-y-4 max-w-sm mx-auto">
+          <div>
+            <label className="block text-xs font-bold text-red-400 uppercase tracking-wider mb-2 flex items-center justify-center gap-1.5">
+              <KeyRound size={14} />
+              ENTER EXECUTIVE HR PIN
+            </label>
+            <input
+              type="password"
+              value={inputPin}
+              onChange={(e) => {
+                setInputPin(e.target.value);
+                setPinError('');
+              }}
+              placeholder="Enter PIN (HR01S)..."
+              className="w-full px-4 py-3 bg-[#0b0e14] border-2 border-red-500 text-white font-mono text-center text-xl font-black tracking-widest focus:outline-none focus:border-[#00f0ff] uppercase placeholder:normal-case placeholder:text-gray-600"
+              autoFocus
+              required
+            />
+          </div>
+
+          {pinError && (
+            <div className="p-3 bg-red-950/80 border border-red-500 text-red-400 text-xs font-bold font-mono">
+              ⚠️ {pinError}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            className="w-full py-3.5 bg-red-600 text-white font-black uppercase tracking-widest text-xs border-2 border-white hover:bg-black hover:text-red-400 transition-all shadow-[0_0_20px_rgba(239,68,68,0.5)] flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <span>VERIFY PIN & UNLOCK PLAYERS DIRECTORY</span>
+            <ArrowRight size={16} />
+          </button>
+        </form>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-6">
