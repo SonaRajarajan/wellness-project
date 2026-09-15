@@ -6,17 +6,7 @@ export default function ExerciseAnalytics() {
   const [videoFile, setVideoFile] = useState(null);
   const [videoPreviewUrl, setVideoPreviewUrl] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
-  const [exerciseData, setExerciseData] = useState({
-    exercise_type: 'Squat',
-    reps_detected: 12,
-    min_joint_angle_deg: 92.4,
-    form_quality_score: 94.5,
-    quality_grade: 'Optimal Biomechanical Control (Grade A)',
-    posture_feedback: 'Optimal depth achieved - hips parallel to ground. Excellent biomechanical form!',
-    total_frames_analyzed: 120,
-    calories_burned_est: 5.4,
-    duration_seconds: 30.0
-  });
+  const [exerciseData, setExerciseData] = useState(null);
 
   const fileInputRef = useRef(null);
 
@@ -24,6 +14,7 @@ export default function ExerciseAnalytics() {
     const file = e.target.files[0];
     if (file) {
       setVideoFile(file);
+      setExerciseData(null); // Clear previous evaluation results when a new video is selected
       const url = URL.createObjectURL(file);
       setVideoPreviewUrl(url);
     }
@@ -33,7 +24,7 @@ export default function ExerciseAnalytics() {
     setAnalyzing(true);
     try {
       if (videoFile) {
-        // Upload video file to FastAPI backend
+        // Upload video file to FastAPI backend for MediaPipe & ST-GCN analysis
         const formData = new FormData();
         formData.append('video', videoFile);
         formData.append('exercise_type', exercise);
@@ -81,7 +72,7 @@ export default function ExerciseAnalytics() {
         }
       }
     } catch (e) {
-      console.warn('Backend API connection warning, presenting client model output', e);
+      console.warn('Backend API connection warning', e);
     } finally {
       setAnalyzing(false);
     }
@@ -104,7 +95,10 @@ export default function ExerciseAnalytics() {
         <div className="flex items-center gap-3">
           <select
             value={exercise}
-            onChange={(e) => setExercise(e.target.value)}
+            onChange={(e) => {
+              setExercise(e.target.value);
+              setExerciseData(null);
+            }}
             className="bg-[#121820] text-purple-300 font-bold text-xs uppercase px-3 py-2.5 border-2 border-purple-500/60 rounded focus:outline-none"
           >
             <option value="Squat">Squat</option>
@@ -203,7 +197,7 @@ export default function ExerciseAnalytics() {
             {/* Reps Counted */}
             <div className="bg-[#182230] p-4 border border-[#2a3442] text-center">
               <div className="text-4xl font-black text-[#00f0ff]">
-                {exerciseData.reps_detected}
+                {exerciseData ? exerciseData.reps_detected : '--'}
               </div>
               <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">
                 Repetitions Detected
@@ -213,7 +207,7 @@ export default function ExerciseAnalytics() {
             {/* Form Score */}
             <div className="bg-[#182230] p-4 border border-[#2a3442] text-center">
               <div className="text-3xl font-black text-[#00ff66]">
-                {exerciseData.form_quality_score}%
+                {exerciseData ? `${exerciseData.form_quality_score}%` : '--'}
               </div>
               <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">
                 Posture Precision Score
@@ -223,12 +217,16 @@ export default function ExerciseAnalytics() {
             {/* Min Joint Flexion Angle */}
             <div className="bg-[#182230] p-3 border border-[#2a3442] text-center flex items-center justify-around">
               <div>
-                <div className="text-xl font-bold text-white">{exerciseData.min_joint_angle_deg}°</div>
+                <div className="text-xl font-bold text-white">
+                  {exerciseData ? `${exerciseData.min_joint_angle_deg}°` : '--'}
+                </div>
                 <div className="text-[9px] text-gray-400 uppercase font-mono">Min Flexion Angle</div>
               </div>
               <div className="w-px h-8 bg-gray-700" />
               <div>
-                <div className="text-xl font-bold text-[#00f0ff]">{exerciseData.calories_burned_est} kcal</div>
+                <div className="text-xl font-bold text-[#00f0ff]">
+                  {exerciseData ? `${exerciseData.calories_burned_est} kcal` : '--'}
+                </div>
                 <div className="text-[9px] text-gray-400 uppercase font-mono">Calories Burned</div>
               </div>
             </div>
@@ -236,7 +234,7 @@ export default function ExerciseAnalytics() {
             {/* ST-GCN Quality Grade */}
             <div className="bg-[#182230] p-3 border border-purple-500/40 text-center">
               <div className="text-xs font-bold text-purple-300 uppercase">
-                {exerciseData.quality_grade}
+                {exerciseData ? exerciseData.quality_grade : 'Awaiting Video Analysis...'}
               </div>
               <div className="text-[10px] text-gray-400 font-mono mt-0.5">ST-GCN Classifier</div>
             </div>
@@ -246,9 +244,13 @@ export default function ExerciseAnalytics() {
           <div className="bg-purple-950/40 p-3 border border-purple-500/50 text-xs text-purple-200 font-mono space-y-1">
             <div className="text-[10px] font-bold text-[#00f0ff] uppercase flex items-center justify-between">
               <span>REAL-TIME AI FEEDBACK</span>
-              <CheckCircle2 size={12} className="text-[#00ff66]" />
+              <CheckCircle2 size={12} className={exerciseData ? 'text-[#00ff66]' : 'text-gray-500'} />
             </div>
-            <p className="leading-relaxed">{exerciseData.posture_feedback}</p>
+            <p className="leading-relaxed">
+              {exerciseData
+                ? exerciseData.posture_feedback
+                : 'Upload your exercise video and click "ANALYZE UPLOADED VIDEO" to compute MediaPipe landmarks, rep counts, and ST-GCN posture evaluation.'}
+            </p>
           </div>
         </div>
       </div>
