@@ -83,3 +83,15 @@ def test_datasets_catalog():
     assert "KU_HAR" in data
     assert "Walker_Fall" in data
     assert "Elderly_Fall_IoT" in data
+
+def test_upload_exercise_video():
+    files = {'video': ('exercise_sample.mp4', b'fake mp4 bytes content', 'video/mp4')}
+    data = {'exercise_type': 'Squat', 'employee_id': 'EMP001'}
+    response = client.post("/api/v1/exercise-analysis/upload-video", files=files, data=data)
+    assert response.status_code == 200
+    res = response.json()
+    assert res["success"] is True
+    assert res["exercise_type"] == "Squat"
+    assert "reps_detected" in res
+    assert "form_quality_score" in res
+    assert "stgcn_movement_quality" in res
