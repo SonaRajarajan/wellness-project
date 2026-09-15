@@ -6,7 +6,7 @@
   body {
     background-color: #0b071e;
     color: #ffffff;
-    font-family: 'Silkscreen', 'VT323', 'Press Start 2P', 'Courier New', monospace;
+    font-family: 'Pixelify Sans', 'VT323', 'Courier New', monospace;
     overflow-x: hidden;
   }
 }
@@ -52,32 +52,21 @@
   animation: shootComet 8s infinite linear;
 }
 
-/* CRT Retro Computer Monitor Container (Inspired by Reference Image) */
+/* CRT Retro Computer Monitor Container (Clean & Readable) */
 .crt-monitor-frame {
-  background: #090c14;
-  border: 4px solid #4deeea;
+  background: #090618;
+  border: 4px solid #00f0ff;
   box-shadow: 
     0 0 0 4px #0d0b2e,
-    0 0 25px rgba(77, 238, 234, 0.4),
-    inset 0 0 15px rgba(77, 238, 234, 0.15);
+    0 0 25px rgba(0, 240, 255, 0.4),
+    inset 0 0 15px rgba(0, 240, 255, 0.1);
   border-radius: 12px;
   position: relative;
   overflow: hidden;
 }
 
-.crt-monitor-frame::before {
-  content: " ";
-  display: block;
-  position: absolute;
-  top: 0; left: 0; bottom: 0; right: 0;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-  z-index: 2;
-  background-size: 100% 3px, 6px 100%;
-  pointer-events: none;
-}
-
 .crt-screen-sheen {
-  background: radial-gradient(ellipse at center, rgba(77, 238, 234, 0.05) 0%, rgba(0, 0, 0, 0.4) 100%);
+  background: radial-gradient(ellipse at center, rgba(0, 240, 255, 0.03) 0%, rgba(0, 0, 0, 0.5) 100%);
 }
 
 /* Retro Pill Badges (Matching Reference Image) */

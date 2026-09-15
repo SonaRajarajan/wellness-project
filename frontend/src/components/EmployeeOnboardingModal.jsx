@@ -122,22 +122,22 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md overflow-y-auto font-mono">
-      <div className="w-full max-w-4xl crt-monitor-frame p-6 md:p-8 shadow-[0_0_50px_rgba(77,238,234,0.4)] relative text-white my-8 crt-screen-sheen">
+      <div className="w-full max-w-4xl crt-monitor-frame p-6 md:p-8 shadow-[0_0_50px_rgba(0,240,255,0.4)] relative text-white my-8 bg-[#090518]">
         
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white bg-[#0b071e] p-2 border-2 border-[#4deeea] hover:border-[#ff007f] transition-all cursor-pointer font-pixel text-xs z-30"
+          className="absolute top-4 right-4 text-gray-300 hover:text-white bg-[#130c3b] px-3 py-1.5 border-2 border-[#00f0ff] hover:border-[#ff007f] transition-all cursor-pointer font-bold text-xs z-30"
         >
-          ✕
+          ✕ CLOSE
         </button>
 
-        {/* RETRO CRT MISSION BRIEFING HEADER (Directly matching reference image) */}
+        {/* RETRO CRT MISSION BRIEFING HEADER (High Contrast & Sharp Typography) */}
         <div className="text-center mb-6 space-y-3">
-          <div className="text-xs md:text-sm font-pixel text-[#4deeea] tracking-widest uppercase animate-pulse">
+          <div className="text-xs md:text-sm font-bold text-[#00f0ff] tracking-widest uppercase">
             MISSION BRIEFING:
           </div>
-          <h2 className="text-2xl md:text-4xl font-black text-white font-pixel uppercase tracking-widest drop-shadow-[0_0_12px_#ffffff]">
+          <h2 className="text-2xl md:text-4xl font-black text-white font-pixel uppercase tracking-widest">
             ONBOARDING
           </h2>
 
@@ -149,17 +149,17 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
             </div>
           </div>
 
-          {/* CRT Computer Terminal Box Motif (Matching center frame in reference image) */}
-          <div className="bg-[#0b071e] border-4 border-[#4deeea] p-4 md:p-6 max-w-lg mx-auto rounded-xl shadow-[0_0_20px_rgba(77,238,234,0.3)] space-y-3 relative overflow-hidden">
-            <div className="text-xs md:text-sm text-[#00f0ff] font-vt323 tracking-widest">
+          {/* CRT Computer Terminal Box Motif (Clean Yellow & Cyan Text) */}
+          <div className="bg-[#0c0624] border-3 border-[#00f0ff] p-4 md:p-5 max-w-lg mx-auto rounded-xl shadow-lg space-y-2 relative overflow-hidden">
+            <div className="text-sm text-[#00f0ff] font-vt323 tracking-widest font-bold">
               HI. . . . . . . . YOU'RE INVITED TO:
             </div>
-            <div className="text-lg md:text-2xl font-black text-[#ffe600] font-pixel leading-relaxed uppercase tracking-wider drop-shadow-[0_0_10px_#ffe600]">
+            <div className="text-base md:text-xl font-black text-[#ffee00] font-pixel leading-relaxed uppercase tracking-wider">
               ONBOARDING SMILEMOTION STELLAR <span className="text-red-500">❤️</span> 2026 <span className="text-red-500">❤️</span>
             </div>
           </div>
 
-          {/* Retro Pill Badges (Directly from reference image) */}
+          {/* Retro Pill Badges (Sharp & Crisp) */}
           <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
             <div className="pixel-pill-badge">
               <span>📅 Friday, 13 March 2026</span>
@@ -173,14 +173,14 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
           </div>
         </div>
 
-        {/* 2 MAIN MODE TAB BUTTONS */}
+        {/* 2 MAIN MODE TAB BUTTONS (High Contrast Readable Tabs) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
           <button
             onClick={() => setActiveTab('existing')}
-            className={`p-4 border-3 flex items-center justify-center gap-3 font-black text-xs md:text-sm font-silkscreen uppercase tracking-wider transition-all cursor-pointer ${
+            className={`p-4 border-2 flex items-center justify-center gap-3 font-bold text-xs md:text-sm uppercase tracking-wider transition-all cursor-pointer ${
               activeTab === 'existing'
-                ? 'bg-[#00f0ff] text-black border-white shadow-[0_0_20px_#00f0ff]'
-                : 'bg-[#120a2e] text-gray-300 border-[#2b1b54] hover:border-[#00f0ff] hover:text-white'
+                ? 'bg-[#00f0ff] text-black border-white font-black shadow-lg scale-[1.02]'
+                : 'bg-[#130c3b] text-white border-[#3b2975] hover:border-[#00f0ff]'
             }`}
           >
             <UserCheck size={20} />
@@ -189,10 +189,10 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
 
           <button
             onClick={() => setActiveTab('new')}
-            className={`p-4 border-3 flex items-center justify-center gap-3 font-black text-xs md:text-sm font-silkscreen uppercase tracking-wider transition-all cursor-pointer ${
+            className={`p-4 border-2 flex items-center justify-center gap-3 font-bold text-xs md:text-sm uppercase tracking-wider transition-all cursor-pointer ${
               activeTab === 'new'
-                ? 'bg-[#00ff66] text-black border-white shadow-[0_0_20px_#00ff66]'
-                : 'bg-[#120a2e] text-gray-300 border-[#2b1b54] hover:border-[#00ff66] hover:text-white'
+                ? 'bg-[#00ff66] text-black border-white font-black shadow-lg scale-[1.02]'
+                : 'bg-[#130c3b] text-white border-[#3b2975] hover:border-[#00ff66]'
             }`}
           >
             <UserPlus size={20} />
@@ -202,20 +202,20 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
 
         {/* TAB 1: EXISTING EMPLOYEE DETAILS */}
         {activeTab === 'existing' && (
-          <div className="space-y-6 bg-[#120a2e] p-6 border-2 border-[#00f0ff] shadow-lg">
+          <div className="space-y-6 bg-[#130c3b] p-6 border-2 border-[#00f0ff] shadow-xl rounded-lg">
             <div>
-              <label className="block text-xs uppercase font-bold text-[#00f0ff] tracking-wider mb-2 font-silkscreen">
-                Select Registered Employee from Database:
+              <label className="block text-xs uppercase font-bold text-[#00f0ff] tracking-wider mb-2 font-mono">
+                SELECT REGISTERED EMPLOYEE FROM DATABASE:
               </label>
               <select
                 value={selectedEmpId}
                 onChange={(e) => setSelectedEmpId(e.target.value)}
-                className="w-full px-4 py-3 bg-[#0b071e] border-2 border-[#00f0ff] text-white font-mono text-sm font-bold focus:outline-none cursor-pointer"
+                className="w-full px-4 py-3 bg-[#090518] border-2 border-[#00f0ff] text-white font-mono text-sm font-bold focus:outline-none cursor-pointer"
               >
                 {employeesList.map((emp) => {
                   const idVal = emp.employee_id || emp.id;
                   return (
-                    <option key={idVal} value={idVal} className="bg-[#0b071e] text-white">
+                    <option key={idVal} value={idVal} className="bg-[#090518] text-white py-1">
                       {idVal} — {emp.name} ({emp.department} • {emp.role || 'Employee'})
                     </option>
                   );
@@ -224,60 +224,60 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
             </div>
 
             {selectedEmpObj && (
-              <div className="bg-[#0b0e14] p-4 border border-purple-500/50 flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="bg-[#090518] p-4 border-2 border-[#3b2975] flex flex-col md:flex-row items-center justify-between gap-4 rounded">
                 <div>
-                  <div className="text-sm font-bold text-white uppercase">{selectedEmpObj.name}</div>
-                  <div className="text-xs text-[#00f0ff] font-mono mt-0.5">
+                  <div className="text-base font-black text-white uppercase tracking-wider">{selectedEmpObj.name}</div>
+                  <div className="text-xs text-[#00f0ff] font-mono mt-1 font-bold">
                     ID: {selectedEmpObj.employee_id || selectedEmpObj.id} • {selectedEmpObj.department} • {selectedEmpObj.role || 'Staff'}
                   </div>
-                  <div className="text-[11px] text-gray-400 mt-1">
-                    Activity Level: <span className="text-purple-300 font-bold">{selectedEmpObj.activity_level || 'Active'}</span>
+                  <div className="text-xs text-gray-300 mt-1">
+                    Activity Level: <span className="text-[#00ff66] font-bold">{selectedEmpObj.activity_level || 'Active'}</span>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-xl font-black text-[#00ff66]">{selectedEmpObj.points || 1200} XP</div>
-                  <div className="text-[10px] text-gray-400 font-mono">GAMIFICATION LEVEL 1</div>
+                  <div className="text-2xl font-black text-[#00ff66]">{selectedEmpObj.points || 1200} XP</div>
+                  <div className="text-[10px] text-gray-400 font-mono tracking-wider">GAMIFICATION LEVEL 1</div>
                 </div>
               </div>
             )}
 
             <button
               onClick={handleSelectExisting}
-              className="w-full py-3 bg-[#00f0ff] text-black font-black uppercase tracking-widest text-sm border-2 border-white hover:bg-black hover:text-[#00f0ff] transition-all shadow-[0_0_15px_rgba(0,240,255,0.4)] flex items-center justify-center gap-2"
+              className="w-full py-4 bg-[#00f0ff] text-black font-black uppercase tracking-widest text-sm border-2 border-white hover:bg-white hover:text-black transition-all shadow-[0_0_20px_rgba(0,240,255,0.5)] flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>LOAD EXISTING EMPLOYEE DIGITAL TWIN</span>
-              <ArrowRight size={18} />
+              <ArrowRight size={20} />
             </button>
           </div>
         )}
 
         {/* TAB 2: NEW EMPLOYEE DETAILS (GOALS, MOOD, SYMPTOMS, HABITS + SYNTHETIC DATA ENGINE) */}
         {activeTab === 'new' && (
-          <form onSubmit={handleRegisterNew} className="space-y-6 max-h-[60vh] overflow-y-auto pr-2">
+          <form onSubmit={handleRegisterNew} className="space-y-6 max-h-[60vh] overflow-y-auto pr-2 font-mono">
             
             {/* Section A: Demographics */}
-            <div className="bg-[#182230] p-4 border border-[#2a3442] space-y-4">
-              <h3 className="text-xs font-bold text-[#00ff66] uppercase tracking-wider border-b border-gray-700 pb-2 flex items-center gap-2">
+            <div className="bg-[#130c3b] p-5 border-2 border-[#3b2975] space-y-4 rounded-lg">
+              <h3 className="text-xs font-bold text-[#00ff66] uppercase tracking-wider border-b border-[#3b2975] pb-2 flex items-center gap-2">
                 <UserCheck size={16} />
                 SECTION 1: PERSONAL & JOB DETAILS
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-300 uppercase mb-1">Full Name</label>
+                  <label className="block text-xs font-bold text-gray-200 uppercase mb-1">Full Name</label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0b0e14] border border-[#2a3442] focus:border-[#00ff66] text-xs font-mono outline-none text-white"
+                    className="w-full px-3 py-2 bg-[#090518] border-2 border-[#3b2975] focus:border-[#00ff66] text-sm text-white font-mono outline-none"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-300 uppercase mb-1">Department</label>
+                  <label className="block text-xs font-bold text-gray-200 uppercase mb-1">Department</label>
                   <select
                     value={formData.department}
                     onChange={(e) => handleInputChange('department', e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0b0e14] border border-[#2a3442] focus:border-[#00ff66] text-xs font-mono outline-none text-white cursor-pointer"
+                    className="w-full px-3 py-2 bg-[#090518] border-2 border-[#3b2975] focus:border-[#00ff66] text-sm text-white font-mono outline-none cursor-pointer"
                   >
                     <option value="Alpha IT">Alpha IT</option>
                     <option value="Beta IT">Beta IT</option>
@@ -288,31 +288,31 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-300 uppercase mb-1">Job Role</label>
+                  <label className="block text-xs font-bold text-gray-200 uppercase mb-1">Job Role</label>
                   <input
                     type="text"
                     value={formData.role}
                     onChange={(e) => handleInputChange('role', e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0b0e14] border border-[#2a3442] focus:border-[#00ff66] text-xs font-mono outline-none text-white"
+                    className="w-full px-3 py-2 bg-[#090518] border-2 border-[#3b2975] focus:border-[#00ff66] text-sm text-white font-mono outline-none"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-300 uppercase mb-1">Age</label>
+                  <label className="block text-xs font-bold text-gray-200 uppercase mb-1">Age</label>
                   <input
                     type="number"
                     value={formData.age}
                     onChange={(e) => handleInputChange('age', e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0b0e14] border border-[#2a3442] focus:border-[#00ff66] text-xs font-mono outline-none text-white"
+                    className="w-full px-3 py-2 bg-[#090518] border-2 border-[#3b2975] focus:border-[#00ff66] text-sm text-white font-mono outline-none"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-300 uppercase mb-1">Gender</label>
+                  <label className="block text-xs font-bold text-gray-200 uppercase mb-1">Gender</label>
                   <select
                     value={formData.gender}
                     onChange={(e) => handleInputChange('gender', e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0b0e14] border border-[#2a3442] focus:border-[#00ff66] text-xs font-mono outline-none text-white cursor-pointer"
+                    className="w-full px-3 py-2 bg-[#090518] border-2 border-[#3b2975] focus:border-[#00ff66] text-sm text-white font-mono outline-none cursor-pointer"
                   >
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
@@ -320,11 +320,11 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-300 uppercase mb-1">Activity Level</label>
+                  <label className="block text-xs font-bold text-gray-200 uppercase mb-1">Activity Level</label>
                   <select
                     value={formData.activity_level}
                     onChange={(e) => handleInputChange('activity_level', e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0b0e14] border border-[#2a3442] focus:border-[#00ff66] text-xs font-mono outline-none text-white cursor-pointer"
+                    className="w-full px-3 py-2 bg-[#090518] border-2 border-[#3b2975] focus:border-[#00ff66] text-sm text-white font-mono outline-none cursor-pointer"
                   >
                     <option value="Sedentary">Sedentary</option>
                     <option value="Lightly Active">Lightly Active</option>
@@ -336,13 +336,13 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
             </div>
 
             {/* Section B: EMPLOYEE INPUTS (Slide 16 Architecture: Goals, Mood, Symptoms, Habits, Diet) */}
-            <div className="bg-[#182230] p-4 border border-[#00f0ff]/60 space-y-4 shadow-[0_0_15px_rgba(0,240,255,0.1)]">
-              <div className="flex items-center justify-between border-b border-[#00f0ff]/30 pb-2">
-                <h3 className="text-xs font-bold text-[#00f0ff] uppercase tracking-wider flex items-center gap-2">
+            <div className="bg-[#130c3b] p-5 border-2 border-[#00f0ff] space-y-4 shadow-xl rounded-lg">
+              <div className="flex items-center justify-between border-b border-[#00f0ff]/40 pb-2">
+                <h3 className="text-xs font-bold text-[#00f0ff] uppercase tracking-wider flex items-center gap-2 font-mono">
                   <Target size={16} />
-                  SECTION 2: EMPLOYEE INPUTS (SLIDE 16 ARCHITECTURE)
+                  SECTION 2: EMPLOYEE INPUTS (GOALS & SYMPTOMS)
                 </h3>
-                <span className="text-[10px] text-[#00ff66] font-mono bg-[#00ff66]/10 px-2.5 py-0.5 border border-[#00ff66]">
+                <span className="text-[10px] text-[#00ff66] font-mono bg-[#00ff66]/10 px-2.5 py-0.5 border border-[#00ff66] font-bold">
                   USER-FRIENDLY SELECTIONS
                 </span>
               </div>
@@ -350,14 +350,14 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* 1. Goals */}
                 <div>
-                  <label className="block text-[11px] font-bold text-[#00f0ff] uppercase mb-1 flex items-center gap-1.5">
+                  <label className="block text-xs font-bold text-[#00f0ff] uppercase mb-1 flex items-center gap-1.5">
                     <Target size={14} />
                     Primary Health Goal
                   </label>
                   <select
                     value={formData.goals}
                     onChange={(e) => handleInputChange('goals', e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0b0e14] border-2 border-[#00f0ff]/60 focus:border-[#00f0ff] text-xs font-mono outline-none text-white cursor-pointer"
+                    className="w-full px-3 py-2 bg-[#090518] border-2 border-[#00f0ff] focus:border-[#00ff66] text-sm text-white font-mono outline-none cursor-pointer"
                   >
                     <option value="Weight Loss & Fat Burn">🎯 Weight Loss & Fat Burn (Calorie Deficit)</option>
                     <option value="Muscle Building & Strength">💪 Muscle Building & Strength (High Protein)</option>
@@ -369,14 +369,14 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
 
                 {/* 2. Mood */}
                 <div>
-                  <label className="block text-[11px] font-bold text-yellow-300 uppercase mb-1 flex items-center gap-1.5">
+                  <label className="block text-xs font-bold text-[#ffee00] uppercase mb-1 flex items-center gap-1.5">
                     <Smile size={14} />
                     Current Workplace Mood
                   </label>
                   <select
                     value={formData.mood}
                     onChange={(e) => handleInputChange('mood', e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0b0e14] border border-[#2a3442] focus:border-yellow-400 text-xs font-mono outline-none text-white cursor-pointer"
+                    className="w-full px-3 py-2 bg-[#090518] border-2 border-[#ffee00] focus:border-[#00ff66] text-sm text-white font-mono outline-none cursor-pointer"
                   >
                     <option value="Energetic & Focused">😊 Energetic & Focused</option>
                     <option value="Slightly Tired / Fatigued">😴 Slightly Tired / Fatigued</option>
@@ -387,14 +387,14 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
 
                 {/* 3. Symptoms */}
                 <div>
-                  <label className="block text-[11px] font-bold text-red-300 uppercase mb-1 flex items-center gap-1.5">
+                  <label className="block text-xs font-bold text-red-400 uppercase mb-1 flex items-center gap-1.5">
                     <AlertCircle size={14} />
                     Physical Symptoms / Discomforts
                   </label>
                   <select
                     value={formData.symptoms}
                     onChange={(e) => handleInputChange('symptoms', e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0b0e14] border border-[#2a3442] focus:border-red-400 text-xs font-mono outline-none text-white cursor-pointer"
+                    className="w-full px-3 py-2 bg-[#090518] border-2 border-red-500 focus:border-[#00ff66] text-sm text-white font-mono outline-none cursor-pointer"
                   >
                     <option value="None / Healthy">🟢 None / Feeling Healthy</option>
                     <option value="Eye Strain / Headaches">💻 Eye Strain / Headaches (Screen Fatigue)</option>
@@ -406,14 +406,14 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
 
                 {/* 4. Dietary Preference */}
                 <div>
-                  <label className="block text-[11px] font-bold text-purple-300 uppercase mb-1 flex items-center gap-1.5">
+                  <label className="block text-xs font-bold text-purple-300 uppercase mb-1 flex items-center gap-1.5">
                     <Utensils size={14} />
                     Dietary Preference
                   </label>
                   <select
                     value={formData.dietary_preference}
                     onChange={(e) => handleInputChange('dietary_preference', e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0b0e14] border border-[#2a3442] focus:border-purple-400 text-xs font-mono outline-none text-white cursor-pointer"
+                    className="w-full px-3 py-2 bg-[#090518] border-2 border-purple-500 focus:border-[#00ff66] text-sm text-white font-mono outline-none cursor-pointer"
                   >
                     <option value="High Protein">🥗 High Protein</option>
                     <option value="Balanced">🍲 Balanced</option>
@@ -426,7 +426,7 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
 
               {/* 5. Habits */}
               <div>
-                <label className="block text-[11px] font-bold text-gray-300 uppercase mb-1">
+                <label className="block text-xs font-bold text-gray-200 uppercase mb-1">
                   Daily Habits & Routine Notes
                 </label>
                 <input
@@ -434,27 +434,27 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
                   value={formData.habits}
                   onChange={(e) => handleInputChange('habits', e.target.value)}
                   placeholder="e.g. Coffee 2 cups/day, Desk Job, Regular Hydration"
-                  className="w-full px-3 py-2 bg-[#0b0e14] border border-[#2a3442] focus:border-[#00f0ff] text-xs font-mono outline-none text-white"
+                  className="w-full px-3 py-2 bg-[#090518] border-2 border-[#3b2975] focus:border-[#00f0ff] text-sm text-white font-mono outline-none"
                 />
               </div>
             </div>
 
             {/* Section C: AUTOMATIC SYNTHETIC DATA GENERATOR TOGGLE */}
-            <div className="bg-[#141d2b] border border-purple-500/50 p-4 space-y-3">
+            <div className="bg-[#130c3b] border-2 border-purple-500 p-4 space-y-3 rounded-lg">
               <div
                 onClick={() => setShowAdvancedSynthetic(!showAdvancedSynthetic)}
                 className="flex items-center justify-between cursor-pointer select-none"
               >
                 <div className="flex items-center gap-2">
-                  <Sparkles className="text-purple-400 animate-pulse" size={18} />
+                  <Sparkles className="text-purple-300 animate-pulse" size={18} />
                   <div>
-                    <div className="text-xs font-bold text-purple-300 uppercase flex items-center gap-2">
+                    <div className="text-xs font-bold text-purple-200 uppercase flex items-center gap-2">
                       AUTOMATIC SYNTHETIC DATA ENGINE ACTIVE
                       <span className="text-[10px] text-[#00ff66] bg-[#00ff66]/10 px-2 py-0.5 border border-[#00ff66]">
                         WEARABLE IoT + HRMS + CLINICAL
                       </span>
                     </div>
-                    <div className="text-[10px] text-gray-400 mt-0.5">
+                    <div className="text-[11px] text-gray-300 mt-0.5">
                       Wearable IoT, HRMS, and Clinical metrics are automatically synthesized based on selected Goal, Mood & Symptoms.
                     </div>
                   </div>
@@ -463,61 +463,51 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
               </div>
 
               {showAdvancedSynthetic && (
-                <div className="pt-3 border-t border-purple-500/30 space-y-4 animate-fadeIn">
-                  <div className="text-[11px] text-gray-300 italic">
+                <div className="pt-3 border-t border-purple-500/40 space-y-4">
+                  <div className="text-xs text-gray-200 italic">
                     Optional: Preview or customize auto-generated Wearable IoT & Clinical Parameters:
                   </div>
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     <div>
-                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Heart Rate (BPM)</label>
+                      <label className="block text-[11px] font-bold text-gray-300 uppercase mb-1">Heart Rate (BPM)</label>
                       <input
                         type="number"
                         placeholder="Auto (72)"
                         value={formData.heart_rate || ''}
                         onChange={(e) => handleInputChange('heart_rate', e.target.value ? Number(e.target.value) : null)}
-                        className="w-full px-2.5 py-1.5 bg-[#0b0e14] border border-[#2a3442] text-xs font-mono text-white"
+                        className="w-full px-2.5 py-1.5 bg-[#090518] border border-[#3b2975] text-xs font-mono text-white"
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Sleep Hours</label>
+                      <label className="block text-[11px] font-bold text-gray-300 uppercase mb-1">Sleep Hours</label>
                       <input
                         type="number"
                         step="0.1"
                         placeholder="Auto (7.5)"
                         value={formData.sleep_hours || ''}
                         onChange={(e) => handleInputChange('sleep_hours', e.target.value ? Number(e.target.value) : null)}
-                        className="w-full px-2.5 py-1.5 bg-[#0b0e14] border border-[#2a3442] text-xs font-mono text-white"
+                        className="w-full px-2.5 py-1.5 bg-[#090518] border border-[#3b2975] text-xs font-mono text-white"
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Daily Steps</label>
+                      <label className="block text-[11px] font-bold text-gray-300 uppercase mb-1">Daily Steps</label>
                       <input
                         type="number"
                         placeholder="Auto (9200)"
                         value={formData.step_count || ''}
                         onChange={(e) => handleInputChange('step_count', e.target.value ? Number(e.target.value) : null)}
-                        className="w-full px-2.5 py-1.5 bg-[#0b0e14] border border-[#2a3442] text-xs font-mono text-white"
+                        className="w-full px-2.5 py-1.5 bg-[#090518] border border-[#3b2975] text-xs font-mono text-white"
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Stress Level (1-10)</label>
+                      <label className="block text-[11px] font-bold text-gray-300 uppercase mb-1">Stress Level (1-10)</label>
                       <input
                         type="number"
                         step="0.5"
                         placeholder="Auto (3.5)"
                         value={formData.stress_level || ''}
                         onChange={(e) => handleInputChange('stress_level', e.target.value ? Number(e.target.value) : null)}
-                        className="w-full px-2.5 py-1.5 bg-[#0b0e14] border border-[#2a3442] text-xs font-mono text-white"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Systolic BP</label>
-                      <input
-                        type="number"
-                        placeholder="Auto (120)"
-                        value={formData.systolic_bp || ''}
-                        onChange={(e) => handleInputChange('systolic_bp', e.target.value ? Number(e.target.value) : null)}
                         className="w-full px-2.5 py-1.5 bg-[#0b0e14] border border-[#2a3442] text-xs font-mono text-white"
                       />
                     </div>
