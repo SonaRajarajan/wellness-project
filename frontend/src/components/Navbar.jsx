@@ -50,6 +50,22 @@ export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboard
     }
   };
 
+  const handleEmployeeDashboardClick = (e) => {
+    e.preventDefault();
+    if (isHrAuthenticated && onLockHr) {
+      onLockHr('/digital-twin');
+    } else {
+      navigate('/digital-twin');
+    }
+  };
+
+  const handleSectionLinkClick = (e, targetPath) => {
+    if (isHrAuthenticated && onLockHr) {
+      e.preventDefault();
+      onLockHr(targetPath);
+    }
+  };
+
   const handleHrDashboardClick = (e) => {
     e.preventDefault();
     if (!isHrAuthenticated) {
@@ -65,7 +81,7 @@ export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboard
         {/* TOP BAR: Brand Logo + Prominent 2 Dashboard Buttons + Active Profile / HR Switcher */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-3 pb-2 border-b border-[#2a3442]">
           {/* Logo */}
-          <Link to="/digital-twin" className="flex items-center gap-2.5 group">
+          <Link to="/digital-twin" onClick={(e) => handleSectionLinkClick(e, '/digital-twin')} className="flex items-center gap-2.5 group">
             <div className="w-9 h-9 bg-[#00f0ff] text-black font-black text-lg flex items-center justify-center border-2 border-white shadow-[0_0_12px_#00f0ff]">
               PD
             </div>
@@ -81,10 +97,10 @@ export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboard
 
           {/* 🌟 PROMINENT DASHBOARD BUTTONS 🌟 */}
           <div className="flex items-center gap-3">
-            {/* Employee Dashboard Button */}
-            <Link
-              to="/digital-twin"
-              className={`flex items-center gap-2 px-4 py-2 text-xs md:text-sm font-black uppercase tracking-wider border-2 transition-all shadow-md ${
+            {/* Employee Dashboard Button (Auto-locks HR mode when clicked) */}
+            <button
+              onClick={handleEmployeeDashboardClick}
+              className={`flex items-center gap-2 px-4 py-2 text-xs md:text-sm font-black uppercase tracking-wider border-2 transition-all shadow-md cursor-pointer ${
                 location.pathname !== '/hr-dashboard'
                   ? 'bg-[#00f0ff] text-black border-white shadow-[0_0_15px_#00f0ff] scale-105'
                   : 'bg-[#141c28] text-[#00f0ff] border-[#00f0ff]/60 hover:bg-[#00f0ff] hover:text-black hover:scale-105'
@@ -92,7 +108,7 @@ export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboard
             >
               <LayoutDashboard size={18} />
               <span>📱 EMPLOYEE DASHBOARD</span>
-            </Link>
+            </button>
 
             {/* HR Enterprise Dashboard Button (Protected by HR01S PIN) */}
             <button
@@ -120,9 +136,9 @@ export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboard
             {isHrAuthenticated ? (
               <>
                 <button
-                  onClick={onLockHr}
+                  onClick={() => onLockHr('/digital-twin')}
                   title="Lock HR Security Mode"
-                  className="flex items-center gap-1 px-2.5 py-1.5 bg-red-950/80 border border-red-500 text-red-300 hover:bg-red-600 hover:text-white text-[11px] font-bold font-mono transition-all cursor-pointer"
+                  className="flex items-center gap-1 px-2.5 py-1.5 bg-red-950/80 border border-red-500 text-red-300 hover:bg-red-600 hover:text-white text-[11px] font-bold font-mono transition-all cursor-pointer shadow-[0_0_10px_rgba(239,68,68,0.4)]"
                 >
                   <Lock size={12} />
                   <span>LOCK HR</span>
@@ -180,6 +196,7 @@ export default function Navbar({ user, onSelectEmployee, onLogout, onOpenOnboard
               <Link
                 key={link.path}
                 to={link.path}
+                onClick={(e) => handleSectionLinkClick(e, link.path)}
                 className={`flex items-center gap-1 px-3 py-1 border text-[11px] font-semibold uppercase tracking-wider transition-all ${
                   isActive
                     ? 'bg-[#182638] text-[#00f0ff] border-[#00f0ff] font-bold shadow-[0_0_6px_#00f0ff]'

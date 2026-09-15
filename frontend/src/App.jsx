@@ -65,9 +65,10 @@ function AppContent() {
     }
   };
 
-  const handleLockHr = () => {
+  const handleLockHr = (targetRoute = '/digital-twin') => {
     setIsHrAuthenticated(false);
     sessionStorage.removeItem('isHrAuthenticated');
+    navigate(targetRoute);
   };
 
   return (
@@ -109,27 +110,35 @@ function AppContent() {
           <Route path="/food" element={<FoodRecommendations user={user} />} />
           <Route path="/health" element={<HealthSuggestions user={user} />} />
           <Route path="/coach" element={<GenAICoach user={user} />} />
-          <Route path="/leaderboard" element={<Leaderboard user={user} />} />
+          <Route path="/leaderboard" element={<Navigate to="/hr-dashboard" replace />} />
           <Route
             path="/hr-dashboard"
             element={
-              <HRDashboard
-                user={user}
-                onSelectEmployee={handleSelectEmployee}
-                isHrAuthenticated={isHrAuthenticated}
-                onAuthenticateHr={handleHrPinSuccess}
-              />
+              isHrAuthenticated ? (
+                <HRDashboard
+                  user={user}
+                  onSelectEmployee={handleSelectEmployee}
+                  isHrAuthenticated={isHrAuthenticated}
+                  onAuthenticateHr={handleHrPinSuccess}
+                />
+              ) : (
+                <Navigate to="/digital-twin" replace />
+              )
             }
           />
           <Route
             path="/players"
             element={
-              <Players
-                user={user}
-                onSelectEmployee={handleSelectEmployee}
-                isHrAuthenticated={isHrAuthenticated}
-                onAuthenticateHr={handleHrPinSuccess}
-              />
+              isHrAuthenticated ? (
+                <Players
+                  user={user}
+                  onSelectEmployee={handleSelectEmployee}
+                  isHrAuthenticated={isHrAuthenticated}
+                  onAuthenticateHr={handleHrPinSuccess}
+                />
+              ) : (
+                <Navigate to="/digital-twin" replace />
+              )
             }
           />
           <Route path="*" element={<Navigate to="/digital-twin" replace />} />
