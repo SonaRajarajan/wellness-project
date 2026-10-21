@@ -73,9 +73,9 @@ export default function ArchitectureView() {
           </div>
         </div>
 
-        {/* Integration Bar */}
-        <div className="bg-[#182230] border border-[#00f0ff]/40 p-3 text-center text-xs font-mono text-[#00f0ff]">
-          📊 MULTIMODAL DATA INTEGRATION LAYER: Data Cleaning ➔ Synchronization ➔ Feature Engineering ➔ Secure Encryption
+        <div className="bg-[#182230] border border-[#00f0ff]/40 p-3 text-center text-xs font-mono text-[#00f0ff] flex items-center justify-center gap-2">
+          <Layers size={16} />
+          <span>MULTIMODAL DATA INTEGRATION LAYER: Data Cleaning ➔ Synchronization ➔ Feature Engineering ➔ Secure Encryption</span>
         </div>
       </div>
 

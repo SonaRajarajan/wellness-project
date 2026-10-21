@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Search, Filter, ShieldCheck, ExternalLink, Eye, Lock, ShieldAlert, KeyRound, ArrowRight } from 'lucide-react';
+import { Users, Search, Filter, ShieldCheck, ExternalLink, Eye, Lock, ShieldAlert, KeyRound, ArrowRight, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { getEmployeeAvatar } from '../utils/avatars';
 
 export default function Players({ user, onSelectEmployee, isHrAuthenticated, onAuthenticateHr }) {
   const [players, setPlayers] = useState([
@@ -98,8 +99,9 @@ export default function Players({ user, onSelectEmployee, isHrAuthenticated, onA
           </div>
 
           {pinError && (
-            <div className="p-3 bg-red-950/80 border border-red-500 text-red-400 text-xs font-bold font-mono">
-              ⚠️ {pinError}
+            <div className="p-3 bg-red-950/80 border border-red-500 text-red-400 text-xs font-bold font-mono flex items-center gap-2">
+              <AlertCircle size={16} />
+              <span>{pinError}</span>
             </div>
           )}
 
@@ -181,9 +183,11 @@ export default function Players({ user, onSelectEmployee, isHrAuthenticated, onA
               }`}
             >
               {/* Avatar Circle */}
-              <div className="w-16 h-16 mx-auto bg-[#182230] border-2 border-[#00f0ff] rounded-full flex items-center justify-center text-[#00f0ff] font-extrabold text-xl group-hover:scale-110 transition-transform">
-                👤
-              </div>
+              <img
+                src={getEmployeeAvatar(p)}
+                alt={p.name}
+                className="w-16 h-16 mx-auto rounded-full border-2 border-[#00f0ff] object-cover shadow-md group-hover:scale-110 transition-transform"
+              />
 
               <div>
                 <h3 className="text-base font-bold text-white uppercase group-hover:text-[#00f0ff] transition-colors">

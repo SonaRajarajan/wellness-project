@@ -39,30 +39,25 @@ class XGBoostHealthRiskPredictor:
         raw_score = 0.30 * w_factor + 0.25 * s_factor + 0.20 * h_factor + 0.15 * str_factor + 0.10 * l_factor
         raw_score = round(float(np.clip(raw_score, 0.05, 0.98)), 3)
 
+        # Model / Rule evaluation
         if self.model is not None:
             try:
                 X_feat = np.array([[workload_hours, sleep_hours, hrv_ms, stress_level, leave_days]])
                 pred_cls_idx = int(self.model.predict(X_feat)[0])
                 pred_cls_idx = min(pred_cls_idx, len(self.risk_classes) - 1)
                 risk_label = self.risk_classes[pred_cls_idx]
-            except Exception as e:
-                if raw_score >= 0.75:
-                    risk_label = "Critical Risk"
-                elif raw_score >= 0.55:
-                    risk_label = "High Risk"
-                elif raw_score >= 0.35:
-                    risk_label = "Moderate Risk"
-                else:
-                    risk_label = "Low Risk"
+            except Exception:
+                risk_label = self._map_score_to_label(raw_score)
         else:
-            if raw_score >= 0.75:
-                risk_label = "Critical Risk"
-            elif raw_score >= 0.55:
-                risk_label = "High Risk"
-            elif raw_score >= 0.35:
-                risk_label = "Moderate Risk"
-            else:
-                risk_label = "Low Risk"
+            risk_label = self._map_score_to_label(raw_score)
+
+        # Safety override: ensure raw_score thresholds enforce consistent risk labels
+        if raw_score >= 0.65 and risk_label != "Critical Risk":
+            risk_label = "Critical Risk"
+        elif raw_score >= 0.45 and risk_label in ["Low Risk", "Moderate Risk"]:
+            risk_label = "High Risk"
+        elif raw_score >= 0.28 and risk_label == "Low Risk":
+            risk_label = "Moderate Risk"
 
         factors = []
         if workload_hours > 50:
@@ -79,3 +74,13 @@ class XGBoostHealthRiskPredictor:
             "auc_accuracy_benchmark": 86.4,
             "contributing_factors": factors if factors else ["Physiological parameters within optimal operational thresholds."]
         }
+
+    def _map_score_to_label(self, score: float) -> str:
+        if score >= 0.65:
+            return "Critical Risk"
+        elif score >= 0.45:
+            return "High Risk"
+        elif score >= 0.28:
+            return "Moderate Risk"
+        else:
+            return "Low Risk"

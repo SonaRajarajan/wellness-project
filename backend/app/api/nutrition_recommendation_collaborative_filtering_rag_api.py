@@ -340,6 +340,16 @@ def get_food_recommendations(employee_id: Optional[str] = Query("EMP001")):
 
     raw_recs = RAG_NUTRITION_KNOWLEDGE_BASE.get(rag_category, RAG_NUTRITION_KNOWLEDGE_BASE["step_count"])
 
+    # Generate AI Prediction Recommendation based on physiological metrics & XGBoost / LSTM forecast
+    if symptom != "None" and symptom != "":
+        ai_pred_rec = f"AI Health Forecast: Detected {symptom} & High Strain — AI recommends anti-inflammatory bioflavonoids, magnesium & recovery nutrients."
+    elif steps < 5000:
+        ai_pred_rec = "AI Health Forecast: Low Physical Movement — AI recommends light clean energy foods with high mitochondrial ATP support."
+    elif sleep < 6.5:
+        ai_pred_rec = "AI Health Forecast: Sleep Deprivation Risk — AI recommends tryptophan & melatonin precursors for parasympathetic recovery."
+    else:
+        ai_pred_rec = "AI Health Forecast: Optimal Physiological Balance — AI recommends high protein & micronutrient maintenance."
+
     courses = []
     recs = []
     for idx, item in enumerate(raw_recs):
@@ -356,7 +366,9 @@ def get_food_recommendations(employee_id: Optional[str] = Query("EMP001")):
             "prep_time": item["prep_time"],
             "cost_pts": item["cost_pts"],
             "rag_triple": item["rag_triple"],
-            "why_this": f"Collaborative Filtering ({cf_rating}/5.0 ⭐, Peer Cosine Sim: {peer_cosine_sim}): {item['why_this']}",
+            "goal_alignment": f"Aligned with Goal: {goal}",
+            "prediction_alignment": f"AI Forecast Match: Targets {symptom if symptom != 'None' else 'Physiological Strain'}",
+            "why_this": f"{item['why_this']} Formulated based on both your personal goal ('{goal}') and AI health forecast ('{symptom if symptom != 'None' else 'High Strain'}').",
             "ordered": False
         }
         recs.append(course_item)
@@ -369,6 +381,7 @@ def get_food_recommendations(employee_id: Optional[str] = Query("EMP001")):
         "employee_name": name,
         "department": department,
         "personal_goal": goal,
+        "prediction_recommendation": ai_pred_rec,
         "current_mood": mood,
         "active_symptom": symptom,
         "daily_calorie_burn": calories,

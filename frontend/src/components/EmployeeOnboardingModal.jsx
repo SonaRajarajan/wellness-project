@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { UserCheck, UserPlus, Shield, Activity, Heart, Moon, Zap, Flame, CheckCircle2, ArrowRight, X, Target, Smile, AlertCircle, Utensils, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
+import { UserCheck, UserPlus, Shield, Activity, Heart, Moon, Zap, Flame, CheckCircle2, ArrowRight, X, Target, Smile, AlertCircle, Utensils, Sparkles, ChevronDown, ChevronUp, Calendar, Clock, Rocket } from 'lucide-react';
+import { getEmployeeAvatar } from '../utils/avatars';
 
 export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmployee }) {
   const [activeTab, setActiveTab] = useState('existing'); // 'existing' | 'new'
@@ -62,7 +63,6 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
     const found = employeesList.find((e) => (e.employee_id || e.id) === selectedEmpId);
     if (found && onSelectEmployee) {
       onSelectEmployee(found);
-      onClose();
     }
   };
 
@@ -85,8 +85,7 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
           setTimeout(() => {
             onSelectEmployee(data.employee);
             setLoading(false);
-            onClose();
-          }, 800);
+          }, 600);
           return;
         }
       }
@@ -110,7 +109,6 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
       };
       onSelectEmployee(newEmpObj);
       setLoading(false);
-      onClose();
     }
   };
 
@@ -121,54 +119,41 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
   const selectedEmpObj = employeesList.find((e) => (e.employee_id || e.id) === selectedEmpId);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md overflow-y-auto font-mono">
-      <div className="w-full max-w-4xl crt-monitor-frame p-6 md:p-8 shadow-[0_0_50px_rgba(0,240,255,0.4)] relative text-white my-8 bg-[#090518]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 bg-black/90 backdrop-blur-md overflow-y-auto font-mono box-border">
+      <div className="w-full max-w-3xl crt-monitor-frame p-4 sm:p-6 md:p-8 shadow-[0_0_40px_rgba(0,240,255,0.4)] relative text-white my-auto max-h-[92vh] overflow-y-auto bg-[#090518] box-border">
         
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-300 hover:text-white bg-[#130c3b] px-3 py-1.5 border-2 border-[#00f0ff] hover:border-[#ff007f] transition-all cursor-pointer font-bold text-xs z-30"
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-300 hover:text-white bg-[#130c3b] px-3 py-1.5 border-2 border-[#00f0ff] hover:border-[#00ff66] transition-all cursor-pointer font-bold text-xs z-30"
         >
           ✕ CLOSE
         </button>
 
         {/* RETRO CRT MISSION BRIEFING HEADER (High Contrast & Sharp Typography) */}
         <div className="text-center mb-6 space-y-3">
-          <div className="text-xs md:text-sm font-bold text-[#00f0ff] tracking-widest uppercase">
+          {/* CRT Computer Terminal Box Motif (Clean Yellow & Cyan Text) - PERFECT FIT */}
+          <div className="bg-[#0c0624] border-2 border-[#00f0ff] p-3 md:p-4 w-full mx-auto rounded-xl shadow-[0_0_20px_rgba(0,240,255,0.25)] space-y-1 relative overflow-hidden text-center mb-4 box-border">
+            <div className="text-xs sm:text-sm md:text-base text-[#00f0ff] font-bold tracking-widest uppercase font-mono whitespace-nowrap overflow-hidden text-ellipsis">
+              WELCOME TO YOUR PERSONAL WELLNESS PORTAL:
+            </div>
+            <div className="text-sm sm:text-base md:text-xl lg:text-2xl font-black text-[#ffee00] font-mono tracking-wider uppercase text-center leading-snug drop-shadow-[0_0_12px_rgba(255,238,0,0.7)] whitespace-nowrap overflow-hidden text-ellipsis">
+              EMPLOYEE WELLNESS & DIGITAL TWIN
+            </div>
+          </div>
+
+          <div className="text-xs md:text-sm font-bold text-[#00f0ff] tracking-widest uppercase whitespace-nowrap">
             MISSION BRIEFING:
           </div>
-          <h2 className="text-2xl md:text-4xl font-black text-white font-pixel uppercase tracking-widest">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white font-pixel uppercase tracking-wider whitespace-nowrap">
             ONBOARDING
           </h2>
 
           {/* Retro Pixel HP Energy Meter */}
           <div className="max-w-xs mx-auto pixel-hp-bar rounded-full my-2">
-            <span className="text-red-500 animate-pulse text-base">❤️</span>
+            <Heart size={16} className="text-red-500 fill-red-500" />
             <div className="flex-1 h-3 bg-[#090517] border border-[#00ff66] rounded-sm overflow-hidden">
               <div className="pixel-hp-bar-fill w-[80%]" />
-            </div>
-          </div>
-
-          {/* CRT Computer Terminal Box Motif (Clean Yellow & Cyan Text) */}
-          <div className="bg-[#0c0624] border-3 border-[#00f0ff] p-4 md:p-5 max-w-lg mx-auto rounded-xl shadow-lg space-y-2 relative overflow-hidden">
-            <div className="text-sm text-[#00f0ff] font-vt323 tracking-widest font-bold">
-              HI. . . . . . . . YOU'RE INVITED TO:
-            </div>
-            <div className="text-base md:text-xl font-black text-[#ffee00] font-pixel leading-relaxed uppercase tracking-wider">
-              ONBOARDING SMILEMOTION STELLAR <span className="text-red-500">❤️</span> 2026 <span className="text-red-500">❤️</span>
-            </div>
-          </div>
-
-          {/* Retro Pill Badges (Sharp & Crisp) */}
-          <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
-            <div className="pixel-pill-badge">
-              <span>📅 Friday, 13 March 2026</span>
-            </div>
-            <div className="pixel-pill-badge pixel-pill-badge-cyan">
-              <span>⏰ 16.30 - finished</span>
-            </div>
-            <div className="pixel-pill-badge pixel-pill-badge-yellow">
-              <span>🚀 RK 1 GD 2 FKG UNPAD</span>
             </div>
           </div>
         </div>
@@ -191,7 +176,7 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
             onClick={() => setActiveTab('new')}
             className={`p-4 border-2 flex items-center justify-center gap-3 font-bold text-xs md:text-sm uppercase tracking-wider transition-all cursor-pointer ${
               activeTab === 'new'
-                ? 'bg-[#00ff66] text-black border-white font-black shadow-lg scale-[1.02]'
+                ? 'bg-[#00ff66] text-black border-white shadow-lg scale-[1.02]'
                 : 'bg-[#130c3b] text-white border-[#3b2975] hover:border-[#00ff66]'
             }`}
           >
@@ -225,13 +210,20 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
 
             {selectedEmpObj && (
               <div className="bg-[#090518] p-4 border-2 border-[#3b2975] flex flex-col md:flex-row items-center justify-between gap-4 rounded">
-                <div>
-                  <div className="text-base font-black text-white uppercase tracking-wider">{selectedEmpObj.name}</div>
-                  <div className="text-xs text-[#00f0ff] font-mono mt-1 font-bold">
-                    ID: {selectedEmpObj.employee_id || selectedEmpObj.id} • {selectedEmpObj.department} • {selectedEmpObj.role || 'Staff'}
-                  </div>
-                  <div className="text-xs text-gray-300 mt-1">
-                    Activity Level: <span className="text-[#00ff66] font-bold">{selectedEmpObj.activity_level || 'Active'}</span>
+                <div className="flex items-center gap-3">
+                  <img
+                    src={getEmployeeAvatar(selectedEmpObj)}
+                    alt={selectedEmpObj.name}
+                    className="w-12 h-12 rounded-full border-2 border-[#00f0ff] object-cover shadow-md"
+                  />
+                  <div>
+                    <div className="text-base font-black text-white uppercase tracking-wider">{selectedEmpObj.name}</div>
+                    <div className="text-xs text-[#00f0ff] font-mono mt-0.5 font-bold">
+                      ID: {selectedEmpObj.employee_id || selectedEmpObj.id} • {selectedEmpObj.department} • {selectedEmpObj.role || 'Staff'}
+                    </div>
+                    <div className="text-xs text-gray-300 mt-0.5">
+                      Activity Level: <span className="text-[#00ff66] font-bold">{selectedEmpObj.activity_level || 'Active'}</span>
+                    </div>
                   </div>
                 </div>
                 <div className="text-right">
@@ -359,11 +351,11 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
                     onChange={(e) => handleInputChange('goals', e.target.value)}
                     className="w-full px-3 py-2 bg-[#090518] border-2 border-[#00f0ff] focus:border-[#00ff66] text-sm text-white font-mono outline-none cursor-pointer"
                   >
-                    <option value="Weight Loss & Fat Burn">🎯 Weight Loss & Fat Burn (Calorie Deficit)</option>
-                    <option value="Muscle Building & Strength">💪 Muscle Building & Strength (High Protein)</option>
-                    <option value="Burnout Prevention & Stress Relief">🧘 Burnout Prevention & Stress Relief</option>
-                    <option value="Energy Boost & Focus">⚡ Energy Boost & Peak Workplace Focus</option>
-                    <option value="Heart & Metabolic Health">❤️ Heart & Metabolic Health</option>
+                    <option value="Weight Loss & Fat Burn">Weight Loss & Fat Burn (Calorie Deficit)</option>
+                    <option value="Muscle Building & Strength">Muscle Building & Strength (High Protein)</option>
+                    <option value="Burnout Prevention & Stress Relief">Burnout Prevention & Stress Relief</option>
+                    <option value="Energy Boost & Focus">Energy Boost & Peak Workplace Focus</option>
+                    <option value="Heart & Metabolic Health">Heart & Metabolic Health</option>
                   </select>
                 </div>
 
@@ -376,12 +368,12 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
                   <select
                     value={formData.mood}
                     onChange={(e) => handleInputChange('mood', e.target.value)}
-                    className="w-full px-3 py-2 bg-[#090518] border-2 border-[#ffee00] focus:border-[#00ff66] text-sm text-white font-mono outline-none cursor-pointer"
+                    className="w-full px-3 py-2 bg-[#090518] border-2 border-[#ffee00] focus:border-[#00ff66] text-sm text-[#ffee00] font-mono outline-none cursor-pointer"
                   >
-                    <option value="Energetic & Focused">😊 Energetic & Focused</option>
-                    <option value="Slightly Tired / Fatigued">😴 Slightly Tired / Fatigued</option>
-                    <option value="Stressed / Overwhelmed">🤯 Stressed / Overwhelmed</option>
-                    <option value="Calm & Balanced">🧘 Calm & Balanced</option>
+                    <option value="Energetic & Focused">Energetic & Focused</option>
+                    <option value="Slightly Tired / Fatigued">Slightly Tired / Fatigued</option>
+                    <option value="Stressed / Overwhelmed">Stressed / Overwhelmed</option>
+                    <option value="Calm & Balanced">Calm & Balanced</option>
                   </select>
                 </div>
 
@@ -396,11 +388,11 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
                     onChange={(e) => handleInputChange('symptoms', e.target.value)}
                     className="w-full px-3 py-2 bg-[#090518] border-2 border-red-500 focus:border-[#00ff66] text-sm text-white font-mono outline-none cursor-pointer"
                   >
-                    <option value="None / Healthy">🟢 None / Feeling Healthy</option>
-                    <option value="Eye Strain / Headaches">💻 Eye Strain / Headaches (Screen Fatigue)</option>
-                    <option value="Lower Back Stiffness">🪑 Lower Back Stiffness (Posture Strain)</option>
-                    <option value="Leg Fatigue / Soreness">🦵 Leg Fatigue / Muscle Soreness</option>
-                    <option value="Insomnia / Poor Sleep">🌙 Insomnia / Poor Sleep Recovery</option>
+                    <option value="None / Healthy">None / Feeling Healthy</option>
+                    <option value="Eye Strain / Headaches">Eye Strain / Headaches (Screen Fatigue)</option>
+                    <option value="Lower Back Stiffness">Lower Back Stiffness (Posture Strain)</option>
+                    <option value="Leg Fatigue / Soreness">Leg Fatigue / Muscle Soreness</option>
+                    <option value="Insomnia / Poor Sleep">Insomnia / Poor Sleep Recovery</option>
                   </select>
                 </div>
 
@@ -415,11 +407,11 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
                     onChange={(e) => handleInputChange('dietary_preference', e.target.value)}
                     className="w-full px-3 py-2 bg-[#090518] border-2 border-purple-500 focus:border-[#00ff66] text-sm text-white font-mono outline-none cursor-pointer"
                   >
-                    <option value="High Protein">🥗 High Protein</option>
-                    <option value="Balanced">🍲 Balanced</option>
-                    <option value="Keto / Low Carb">🥑 Keto / Low Carb</option>
-                    <option value="Vegetarian">🌿 Vegetarian</option>
-                    <option value="Vegan">🍃 Vegan</option>
+                    <option value="High Protein">High Protein</option>
+                    <option value="Balanced">Balanced</option>
+                    <option value="Keto / Low Carb">Keto / Low Carb</option>
+                    <option value="Vegetarian">Vegetarian</option>
+                    <option value="Vegan">Vegan</option>
                   </select>
                 </div>
               </div>
@@ -559,7 +551,7 @@ export default function EmployeeOnboardingModal({ isOpen, onClose, onSelectEmplo
               className="w-full py-3.5 bg-[#00ff66] text-black font-black uppercase tracking-widest text-sm border-2 border-white hover:bg-black hover:text-[#00ff66] transition-all shadow-[0_0_20px_rgba(0,255,102,0.4)] flex items-center justify-center gap-2 cursor-pointer"
             >
               <Zap size={18} />
-              <span>{loading ? 'SYNTHESIZING WEARABLE DATA & RUNNING AI MODELS...' : '⚡ COMPUTE AI DIGITAL TWIN & SUBMIT EMPLOYEE GOALS'}</span>
+              <span>{loading ? 'SYNTHESIZING WEARABLE DATA & RUNNING AI MODELS...' : 'COMPUTE AI DIGITAL TWIN & SUBMIT EMPLOYEE GOALS'}</span>
             </button>
           </form>
         )}

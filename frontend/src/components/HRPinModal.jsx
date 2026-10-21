@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Lock, ShieldAlert, KeyRound, ArrowRight, X, Eye, EyeOff } from 'lucide-react';
+import { Lock, ShieldAlert, KeyRound, ArrowRight, X, Eye, EyeOff, AlertCircle } from 'lucide-react';
 
 export default function HRPinModal({ isOpen, onClose, onSuccess }) {
   const [pin, setPin] = useState('');
@@ -82,8 +82,9 @@ export default function HRPinModal({ isOpen, onClose, onSuccess }) {
           </div>
 
           {error && (
-            <div className="p-3 bg-red-950/80 border border-red-500 text-red-400 text-xs font-bold font-mono text-center">
-              ⚠️ {error}
+            <div className="p-3 bg-red-950/80 border border-red-500 text-red-400 text-xs font-bold font-mono text-center flex items-center justify-center gap-1.5">
+              <AlertCircle size={14} />
+              <span>{error}</span>
             </div>
           )}
 

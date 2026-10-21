@@ -122,7 +122,7 @@ def buy_jungle_item(item_name: str = Body(..., embed=True), employee_id: str = B
     }
 
 # -------------------------------------------------------------------------
-# 3. LEADERBOARD PODIUM VIEW (Figure 4.1)
+# 3. LEADERBOARD PODIUM, INTER, & INTRA VIEWS (Figure 4.1)
 # -------------------------------------------------------------------------
 @router.get("/leaderboard")
 def get_leaderboard_podium():
@@ -132,6 +132,40 @@ def get_leaderboard_podium():
             {"rank": 2, "department": "Alpha IT", "score": 41, "badge": "RUNNER-UP", "color": "silver"},
             {"rank": 3, "department": "Beta IT", "score": 40, "badge": "THIRD PLACE", "color": "bronze"}
         ],
+        "inter_department": [
+            {"rank": 1, "department": "Operations", "score": 57, "points": 14250, "members": 14, "avg_wellness": 8.5},
+            {"rank": 2, "department": "Alpha IT", "score": 41, "points": 13800, "members": 18, "avg_wellness": 8.1},
+            {"rank": 3, "department": "Beta IT", "score": 40, "points": 11400, "members": 12, "avg_wellness": 7.8},
+            {"rank": 4, "department": "Data Science", "score": 38, "points": 10500, "members": 10, "avg_wellness": 7.6},
+            {"rank": 5, "department": "Design", "score": 34, "points": 9100, "members": 8, "avg_wellness": 7.2},
+            {"rank": 6, "department": "HR", "score": 31, "points": 8900, "members": 6, "avg_wellness": 7.0}
+        ],
+        "intra_department": {
+            "Alpha IT": [
+                {"rank": 1, "employee_id": "EMP001", "name": "Sona VR", "role": "Lead AI Engineer", "points": 1450, "level": 12, "badge": "👑 MVP"},
+                {"rank": 2, "employee_id": "EMP018", "name": "Aarav Mehta", "role": "Senior Dev", "points": 1320, "level": 10, "badge": "🥈 Star"},
+                {"rank": 3, "employee_id": "EMP019", "name": "Rohan Das", "role": "Backend Dev", "points": 1210, "level": 9, "badge": "🥉 Pro"},
+                {"rank": 4, "employee_id": "EMP022", "name": "Meera Joshi", "role": "Cloud Arch", "points": 1080, "level": 8, "badge": "⚡ Achiever"}
+            ],
+            "Beta IT": [
+                {"rank": 1, "employee_id": "EMP002", "name": "Priya Kapoor", "role": "Data Analyst", "points": 1380, "level": 11, "badge": "👑 MVP"},
+                {"rank": 2, "employee_id": "EMP020", "name": "Neha Gupta", "role": "QA Lead", "points": 1240, "level": 9, "badge": "🥈 Star"},
+                {"rank": 3, "employee_id": "EMP023", "name": "Vikram Seth", "role": "Database Eng", "points": 1150, "level": 8, "badge": "🥉 Pro"}
+            ],
+            "Operations": [
+                {"rank": 1, "employee_id": "EMP004", "name": "Raj Verma", "role": "Ops Manager", "points": 1580, "level": 14, "badge": "👑 MVP"},
+                {"rank": 2, "employee_id": "EMP1001", "name": "Amit Singh", "role": "Ops Specialist", "points": 1410, "level": 11, "badge": "🥈 Star"},
+                {"rank": 3, "employee_id": "EMP024", "name": "Ananya Roy", "role": "Process Analyst", "points": 1290, "level": 10, "badge": "🥉 Pro"}
+            ],
+            "Design": [
+                {"rank": 1, "employee_id": "EMP005", "name": "Amit Sharma", "role": "UI/UX Designer", "points": 1290, "level": 10, "badge": "👑 MVP"},
+                {"rank": 2, "employee_id": "EMP025", "name": "Siddharth Nair", "role": "Motion Designer", "points": 1180, "level": 9, "badge": "🥈 Star"}
+            ],
+            "Engineering": [
+                {"rank": 1, "employee_id": "EMP003", "name": "Kavya Patel", "role": "DevOps Engineer", "points": 1390, "level": 11, "badge": "👑 MVP"},
+                {"rank": 2, "employee_id": "EMP026", "name": "Tariq Khan", "role": "Systems Engineer", "points": 1220, "level": 9, "badge": "🥈 Star"}
+            ]
+        },
         "full_rankings": [
             {"rank": 1, "department": "Operations", "score": 57, "points": 14250, "members": 14},
             {"rank": 2, "department": "Alpha IT", "score": 41, "points": 13800, "members": 18},
